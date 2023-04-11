@@ -1,14 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-
-/**
- * 일단 mousedown 이벤트에서 잡은 startX를 업데이트해주지 않으니까 dx dy가 너무 커질거같아요
- *
- * 첫 지점을 계속 잡지 않고, move이벤트 발생할 때, 현재 위치랑 이전 이벤트 발생지점의 차이를 옮겨주는 방식으로 예를 들어) 1만큼 계속 움직이면, 계속 +1 +1 +1… 해주면 되겠죠
- * 이전 위치를 기억해야겠죠
- *
- * https://velog.io/@sugar_ghost/javascript%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%B4-mouse%EB%A1%9C-html-%EC%9A%94%EC%86%8C-drag%ED%95%98%EA%B8%B0%EC%BD%94%EB%93%9C-%EC%A0%80%EC%9E%A5%EC%9A%A9
- */
+import useDragDiv from "../../hook/useDragDiv";
 
 interface WindowProps {
   children: React.ReactNode;
@@ -23,62 +15,11 @@ export default function WindowCustom({ children }: WindowProps) {
   const [width, setWidth] = useState(800);
   const [height, setHeight] = useState(400);
 
-  const [left, setLeft] = useState(100);
-  const [top, setTop] = useState(100);
-
-  // const [position, setPosition] = useState<{ left: number; top: number }>({
-  //   left: 100,
-  //   top: 100,
-  // });
-
-  let startX: number = 0;
-  let startY: number = 0;
-
   // drag 로직
-  useEffect(() => {
-    if (!windowRef.current) return;
-
-    const downEvent = (e: MouseEvent) => {
-      // 클릭 시작
-      const isHeadClick = document
-        .elementsFromPoint(e.clientX, e.clientY)
-        .includes(headRef.current!!);
-      if (isHeadClick === false) return;
-
-      startX = e.clientX;
-      startY = e.clientY;
-
-      // 드래그 시작
-      const move = (e: MouseEvent) => {
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-
-        setLeft(left + dx);
-        setTop(top + dy);
-      };
-
-      // 드래그 종료
-      const up = (e: MouseEvent) => {
-        window.removeEventListener("mousemove", move);
-        window.removeEventListener("mouseup", up);
-
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-
-        setLeft(left + dx);
-        setTop(top + dy);
-      };
-
-      window.addEventListener("mousemove", move);
-      window.addEventListener("mouseup", up);
-    };
-
-    windowRef.current.addEventListener("mousedown", downEvent);
-
-    return () => {
-      windowRef.current?.removeEventListener("mousedown", downEvent);
-    };
-  }, [windowRef]);
+  const { left, top } = useDragDiv({
+    target: windowRef,
+    handle: headRef,
+  });
 
   // resize 로직
   // useEffect(() => {
@@ -118,6 +59,8 @@ export default function WindowCustom({ children }: WindowProps) {
   //     // 상하변
   //     else if (mouseY <= THRESHOLD || mouseY >= height - THRESHOLD) {
   //       (e.target as HTMLElement).style.cursor = "n-resize";
+  //     } else if (listsOnPoint.includes(headRef.current!!)) {
+  //       (e.target as HTMLElement).style.cursor = "move";
   //     }
   //     // 나머지 경우
   //     else {
@@ -126,10 +69,8 @@ export default function WindowCustom({ children }: WindowProps) {
   //   });
   // }, []);
 
-  const spec = { left, top, width, height };
-
   return (
-    <div.wrap {...spec} ref={windowRef}>
+    <div.wrap style={{ left, top, width, height }} ref={windowRef}>
       <div.resize>
         <div.head ref={headRef}></div.head>
 
@@ -140,19 +81,10 @@ export default function WindowCustom({ children }: WindowProps) {
 }
 
 const div = {
-  wrap: styled.div<{
-    left: number;
-    top: number;
-    width: number;
-    height: number;
-  }>`
+  wrap: styled.div`
     position: fixed;
-    left: ${(p) => p.left}px;
-    top: ${(p) => p.top}px;
-    width: ${(p) => p.width}px;
-    height: ${(p) => p.height}px;
-    padding: 10px;
 
+    padding: 10px;
     border: 1px #000 solid;
     background-color: white;
   `,
