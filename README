@@ -1,1 +1,9 @@
-## ktw
+## 컨셉
+- 위젯을 클릭하면 윈도우창에 해당되는 컴포넌트를 보여주는 프로젝트.
+- 실제 윈도우창 같이 `drag & resize`가 가능한 창 구현.
+- drag의 범위를 viewport 바깥까지 할수있지만, 아예 나가버리진 않도록 적당한 `threshold`값으로 제한
+
+## Skill
+- react & ts
+- zustand
+- react-query(tanstack query)
