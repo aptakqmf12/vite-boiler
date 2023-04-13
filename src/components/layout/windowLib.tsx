@@ -9,16 +9,11 @@ import type { WindowType } from "../../store";
 // x,y : move시 좌표
 // savedX,Y : zustand에 저장될 좌표
 export default function WindowLib(props: WindowType) {
-  const { removeWindow, toggleScreenSize, setSavedPosition } = useWindowStore();
-  const {
-    uuid,
-    component,
-    zIndex = 1,
-    isFullScreen = false,
-    savedX,
-    savedY,
-  } = props;
+  const { removeWindow, toggleScreenSize, setSavedPosition, focusWindow } =
+    useWindowStore();
+  const { uuid, component, zIndex = 1, isFullScreen, savedX, savedY } = props;
 
+  const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({
     currX: savedX || 0,
     currY: savedY || 0,
@@ -29,23 +24,19 @@ export default function WindowLib(props: WindowType) {
   }>({ width: 1000, height: 600 });
   const [{ currX, currY }, { width, height }] = [position, size];
 
-  const onFullScreen = () => {
-    if (isFullScreen === true) {
-      // 창모드로
-      setPosition({ currX: savedX || 0, currY: savedY || 0 });
-      setSize({ width: 1000, height: 600 });
-    } else {
-      // 풀모드로
+  const onClose = () => removeWindow(uuid);
+  const onFocus = () => focusWindow(uuid);
+  const onToggleFullScreen = () => toggleScreenSize(uuid);
+
+  useEffect(() => {
+    if (isFullScreen) {
       setPosition({ currX: 0, currY: 0 });
       setSize({ width: "100vw", height: "100vh" });
+    } else {
+      setPosition({ currX: savedX || 0, currY: savedY || 0 });
+      setSize({ width: 1000, height: 600 });
     }
-
-    toggleScreenSize(uuid);
-  };
-
-  const onClose = () => {
-    removeWindow(uuid);
-  };
+  }, [isFullScreen]);
 
   const THRESHOLD = 30;
   const bounds = {
@@ -57,24 +48,36 @@ export default function WindowLib(props: WindowType) {
 
   return (
     <Draggable
-      onDrag={(_, data) => setPosition({ currX: data.x, currY: data.y })}
-      onStop={(_, data) => setSavedPosition(uuid, { x: data.x, y: data.y })}
+      onMouseDown={() => onFocus()}
+      //onStart={() => setIsDragging(true)}
+      onDrag={(_, data) => {
+        setIsDragging(true);
+        setPosition({ currX: data.x, currY: data.y });
+      }}
+      onStop={(_, data) => {
+        setSavedPosition(uuid, { x: data.x, y: data.y });
+        setIsDragging(false);
+      }}
       disabled={isFullScreen}
       bounds={bounds}
       handle={".handle"}
       defaultPosition={{ x: 0, y: 0 }}
       position={{ x: currX, y: currY }}
     >
-      <div.wrap style={{ width, height }}>
+      <div.wrap
+        className={isDragging ? "transparent" : ""}
+        style={{ width, height, zIndex }}
+        onClick={onFocus}
+      >
         <div.head
-          onDoubleClick={onFullScreen}
+          onDoubleClick={onToggleFullScreen}
           isFullScreen={isFullScreen}
           className="handle"
         >
-          <div className="title">{zIndex}Risk Zero 3.0</div>
+          <div className="title">{String(isFullScreen)}Risk Zero 3.0</div>
 
           <div className="btns">
-            <button onClick={onFullScreen}>
+            <button onClick={onToggleFullScreen}>
               {isFullScreen ? <FullscreenExit /> : <Fullscreen />}
             </button>
 
@@ -84,7 +87,7 @@ export default function WindowLib(props: WindowType) {
           </div>
         </div.head>
 
-        {/* <div.body>{component}</div.body> */}
+        <div.body>{component}</div.body>
       </div.wrap>
     </Draggable>
   );
@@ -102,6 +105,10 @@ const div = {
     border: 1px #000 solid;
     background-color: white;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+
+    &.transparent {
+      opacity: 0.6;
+    }
   `,
   head: styled.div<{ isFullScreen: boolean }>`
     display: flex;

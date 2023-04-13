@@ -26,10 +26,27 @@ export default function MyHome() {
     <div.wrap>
       <div.station className="station">
         <div.grid>
-          <div onClick={() => appendWindow({ component: <RiskEvaluate /> })}>
+          <div
+            onClick={() =>
+              appendWindow({
+                component: <RiskEvaluate />,
+                isFullScreen: false,
+              })
+            }
+          >
             <Home sx={iconSx} />
           </div>
-          <People sx={iconSx} />
+          <div
+            onClick={() =>
+              appendWindow({
+                component: <div>people</div>,
+                isFullScreen: false,
+              })
+            }
+          >
+            <People sx={iconSx} />
+          </div>
+
           <DocumentScanner sx={iconSx} />
           <Backpack sx={iconSx} />
           <MobileFriendly sx={iconSx} />
