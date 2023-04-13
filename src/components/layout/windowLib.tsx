@@ -49,7 +49,6 @@ export default function WindowLib(props: WindowType) {
   return (
     <Draggable
       onMouseDown={() => onFocus()}
-      //onStart={() => setIsDragging(true)}
       onDrag={(_, data) => {
         setIsDragging(true);
         setPosition({ currX: data.x, currY: data.y });

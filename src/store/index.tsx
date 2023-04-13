@@ -7,7 +7,6 @@ export interface WindowType {
   uuid: string;
   component: React.ReactNode;
   isFullScreen: boolean;
-
   zIndex?: number;
   savedX?: number;
   savedY?: number;
