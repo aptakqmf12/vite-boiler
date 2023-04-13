@@ -9,15 +9,14 @@ import { BrowserRouter as Router } from "react-router-dom";
 const client = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
+  // React.StrictMode 사용시 MUI에서 findDOMNode 충돌
+  <>
     <QueryClientProvider client={client}>
       <ReactQueryDevtools initialIsOpen={false} />
 
-      <React.StrictMode>
-        <Router>
-          <App />
-        </Router>
-      </React.StrictMode>
+      <Router>
+        <App />
+      </Router>
     </QueryClientProvider>
-  </React.StrictMode>
+  </>
 );

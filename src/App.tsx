@@ -68,6 +68,7 @@ const GlobalStyle = createGlobalStyle`
     color:inherit
   }
   button{
+    padding:0;
     background-color: transparent;
     border:none;
     cursor: pointer;

@@ -3,11 +3,15 @@ import { useState, useEffect, RefObject } from "react";
 interface useDragDivProps {
   target: RefObject<HTMLDivElement>;
   handle: RefObject<HTMLDivElement>;
+  isFullScreen: boolean;
 }
 
-export default function useDragDiv({ target, handle }: useDragDivProps) {
-  const [left, setLeft] = useState(100);
-  const [top, setTop] = useState(100);
+export default function useDragDiv({
+  target,
+  handle,
+  isFullScreen,
+}: useDragDivProps) {
+  const [position, setPosition] = useState({ x: 100, y: 100 });
   const [prevX, setPrevX] = useState(0);
   const [prevY, setPrevY] = useState(0);
   const [currentX, setCurrentX] = useState(0);
@@ -16,13 +20,13 @@ export default function useDragDiv({ target, handle }: useDragDivProps) {
 
   useEffect(() => {
     const mouseDown = (e: MouseEvent) => {
+      e.preventDefault();
+      document.getSelection()?.removeAllRanges();
+
       const isHeadClick = document
         .elementsFromPoint(e.clientX, e.clientY)
         .includes(handle.current!!);
-
-      if (isHeadClick === false) return;
-
-      document.getSelection()?.removeAllRanges();
+      if (!isHeadClick) return;
 
       setIsPressed(true);
     };
@@ -32,7 +36,6 @@ export default function useDragDiv({ target, handle }: useDragDivProps) {
 
     target.current?.addEventListener("mousedown", mouseDown);
     target.current?.addEventListener("mouseup", mouseUp);
-
     return () => {
       target.current?.removeEventListener("mousedown", mouseDown);
       target.current?.removeEventListener("mouseup", mouseUp);
@@ -48,7 +51,6 @@ export default function useDragDiv({ target, handle }: useDragDivProps) {
     };
 
     window.addEventListener("mousemove", mouseMove);
-
     return () => window.removeEventListener("mousemove", mouseMove);
   }, [currentX, currentY]);
 
@@ -60,20 +62,37 @@ export default function useDragDiv({ target, handle }: useDragDivProps) {
   }, [isPressed, currentX, currentY]);
 
   useEffect(() => {
+    if (isFullScreen) return;
+
     const mouseMove = () => {
       if (!isPressed) return;
 
-      setLeft((left) => left + (currentX - prevX));
-      setTop((top) => top + (currentY - prevY));
+      // 마우스 아웃시 예외처리
+      if (position.x < 0) {
+        setPosition((position) => ({
+          x: 1,
+          y: position.y + (currentY - prevY),
+        }));
+      }
+      if (position.y < 0) {
+        setPosition((position) => ({
+          x: position.x + (currentX - prevX),
+          y: 1,
+        }));
+      }
+
+      setPosition((position) => ({
+        x: position.x + (currentX - prevX),
+        y: position.y + (currentY - prevY),
+      }));
     };
 
     window.addEventListener("mousemove", mouseMove);
-
     return () => window.removeEventListener("mousemove", mouseMove);
   }, [isPressed, currentX, currentY, prevX, prevY]);
 
   return {
-    left,
-    top,
+    position,
+    setPosition,
   };
 }

@@ -1,20 +1,74 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { createJSONStorage, devtools, persist } from "zustand/middleware";
+import { v4 as uuidv4 } from "uuid";
+import { ReactElement, ReactNode } from "react";
 
-interface UserStore {
-  isLogin: boolean;
-  setLogin: (b: boolean) => void;
+export interface WindowType {
+  uuid: string;
+  component: React.ReactNode;
+
+  zIndex?: number;
+  isFullScreen?: boolean;
+  savedX?: number;
+  savedY?: number;
+  width?: number;
+  height?: number;
+}
+interface WindowStore {
+  currentWindows: WindowType[];
+  appendWindow: (props: Omit<WindowType, "uuid">) => void;
+  removeWindow: (uuid: string) => void;
+  setSavedPosition: (uuid: string, position: { x: number; y: number }) => void;
+  toggleScreenSize: (uuid: string) => void;
 }
 
-export const useUserStore = create<UserStore>()(
+export const useWindowStore = create<WindowStore>()(
   devtools(
     persist(
       (set) => ({
-        isLogin: false,
-        setLogin: () => set((state) => ({ isLogin: !state.isLogin })),
+        currentWindows: [],
+        appendWindow: (props: Omit<WindowType, "uuid">) =>
+          set((state) => ({
+            currentWindows: [
+              ...state.currentWindows,
+              {
+                uuid: uuidv4(),
+                ...props,
+              },
+            ],
+          })),
+
+        removeWindow: (uuid: string) =>
+          set((state) => ({
+            currentWindows: state.currentWindows.filter(
+              (window) => window.uuid !== uuid
+            ),
+          })),
+
+        setSavedPosition: (uuid: string, position: { x: number; y: number }) =>
+          set((state) => ({
+            currentWindows: state.currentWindows.map((window) => {
+              if (window.uuid === uuid) {
+                window.savedX = position.x;
+                window.savedY = position.y;
+              }
+              return window;
+            }),
+          })),
+
+        toggleScreenSize: (uuid: string) =>
+          set((state) => ({
+            currentWindows: state.currentWindows.map((window) => {
+              if (window.uuid === uuid) {
+                window.isFullScreen = !window.isFullScreen;
+              }
+              return window;
+            }),
+          })),
       }),
       {
-        name: "user-storage",
+        name: "window datas",
+        storage: createJSONStorage(() => sessionStorage),
       }
     )
   )

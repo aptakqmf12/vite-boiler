@@ -1,5 +1,14 @@
 import { useState } from "react";
 import styled from "styled-components";
+import {
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Box,
+} from "@mui/material";
+import { Home, Mail, Inbox, People } from "@mui/icons-material";
 
 export interface TemplateProps {
   name: string;
@@ -11,6 +20,7 @@ export enum TabStatus {
   ONE,
   TWO,
   THREE,
+  FOUR,
 }
 
 export default function Template({ data }: { data: TemplateProps[] }) {
@@ -20,15 +30,36 @@ export default function Template({ data }: { data: TemplateProps[] }) {
 
   return (
     <div.wrap>
-      <nav>
-        <ul>
-          {data.map((tab, i) => (
-            <li onClick={() => setCurrentTab(tab.status)} key={i}>
-              {tab.name}
-            </li>
-          ))}
-        </ul>
-      </nav>
+      <div className="sidebar">
+        <Box
+          sx={{
+            width: 300,
+            height: "100%",
+            borderRight: "1px #dddddd solid",
+          }}
+        >
+          <List>
+            {data.map((tab, index) => (
+              <ListItem
+                key={index}
+                onClick={() => setCurrentTab(tab.status)}
+                disablePadding
+              >
+                <ListItemButton>
+                  <ListItemIcon>
+                    {
+                      [<Home />, <Mail />, <Inbox />, <People />, <Mail />][
+                        index
+                      ]
+                    }
+                  </ListItemIcon>
+                  <ListItemText primary={tab.name} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </div>
 
       <div className="content">{content}</div>
     </div.wrap>
@@ -42,27 +73,11 @@ const div = {
     width: 100%;
     height: 100%;
 
-    nav {
-      width: 150px;
-      padding: 4px;
-      ul {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        li {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          border: 1px gray solid;
-        }
-      }
-    }
-
     .content {
       width: 100%;
-      height: 100%;
-      padding: 4px;
-      background-color: #a7a4a4;
+
+      padding: 10px;
+      background-color: #ffffff;
       box-sizing: border-box;
     }
   `,

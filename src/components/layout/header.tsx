@@ -5,7 +5,7 @@ export default function Header() {
   const NAV_LIST = [{ to: "/", name: "홈" }];
 
   return (
-    <header>
+    <header.wrap>
       <ul.nav>
         {NAV_LIST.map((nav, i) => {
           const { to, name } = nav;
@@ -17,9 +17,18 @@ export default function Header() {
           );
         })}
       </ul.nav>
-    </header>
+    </header.wrap>
   );
 }
+
+const header = {
+  wrap: styled.header`
+    position: absolute;
+    height: 40px;
+    background-color: aliceblue;
+  `,
+};
+
 const ul = {
   nav: styled.ul`
     display: flex;
