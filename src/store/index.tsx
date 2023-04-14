@@ -8,69 +8,106 @@ export interface WindowType {
   component: React.ReactNode;
   isFullScreen: boolean;
   zIndex?: number;
-  savedX?: number;
-  savedY?: number;
-  width?: number;
-  height?: number;
+  x?: number;
+  y?: number;
+  w?: number;
+  h?: number;
 }
 interface WindowStore {
   currentWindows: WindowType[];
   appendWindow: (props: Omit<WindowType, "uuid">) => void;
   removeWindow: (uuid: string) => void;
-  setSavedPosition: (uuid: string, position: { x: number; y: number }) => void;
+  setWindowPosition: (uuid: string, position: { x: number; y: number }) => void;
   toggleScreenSize: (uuid: string) => void;
   focusWindow: (uuid: string) => void;
+  resizeWindow: (uuid: string, w: number, h: number) => void;
 }
 
 export const useWindowStore = create<WindowStore>()(
   devtools((set) => ({
     currentWindows: [],
-    appendWindow: (props: Omit<WindowType, "uuid">) =>
-      set((state) => ({
-        currentWindows: [
-          ...state.currentWindows,
-          {
-            uuid: uuidv4(),
-            ...props,
-          },
-        ],
-      })),
-
-    removeWindow: (uuid: string) =>
-      set((state) => ({
-        currentWindows: state.currentWindows.filter(
-          (window) => window.uuid !== uuid
-        ),
-      })),
-
-    setSavedPosition: (uuid: string, position: { x: number; y: number }) =>
-      set((state) => ({
-        currentWindows: state.currentWindows.map((window) => {
-          if (window.uuid === uuid) {
-            window.savedX = position.x;
-            window.savedY = position.y;
-          }
-          return window;
+    appendWindow: (props: Omit<WindowType, "uuid">) => {
+      set(
+        (state) => ({
+          currentWindows: [
+            ...state.currentWindows,
+            {
+              uuid: uuidv4(),
+              ...props,
+            },
+          ],
         }),
-      })),
-
-    toggleScreenSize: (uuid: string) =>
-      set((state) => ({
-        currentWindows: state.currentWindows.map((window) => {
-          if (window.uuid === uuid) {
-            window.isFullScreen = !window.isFullScreen;
-          }
-          return window;
+        undefined,
+        "[window]add"
+      );
+    },
+    removeWindow: (uuid: string) => {
+      set(
+        (state) => ({
+          currentWindows: state.currentWindows.filter(
+            (window) => window.uuid !== uuid
+          ),
         }),
-      })),
-
-    focusWindow: (uuid: string) =>
-      set((state) => ({
-        currentWindows: state.currentWindows.map((window) => {
-          window.zIndex = window.uuid === uuid ? 2 : 1;
-
-          return window;
+        undefined,
+        "[window]remove"
+      );
+    },
+    setWindowPosition: (uuid: string, position: { x: number; y: number }) => {
+      set(
+        (state) => ({
+          currentWindows: state.currentWindows.map((window) => {
+            if (window.uuid === uuid) {
+              window.x = position.x;
+              window.y = position.y;
+            }
+            return window;
+          }),
         }),
-      })),
+        undefined,
+        "[window]position"
+      );
+    },
+    toggleScreenSize: (uuid: string) => {
+      set(
+        (state) => ({
+          currentWindows: state.currentWindows.map((window) => {
+            if (window.uuid === uuid) {
+              window.isFullScreen = !window.isFullScreen;
+            }
+            return window;
+          }),
+        }),
+        undefined,
+        "[window]screenSize"
+      );
+    },
+    focusWindow: (uuid: string) => {
+      set(
+        (state) => ({
+          currentWindows: state.currentWindows.map((window) => {
+            window.zIndex = window.uuid === uuid ? 2 : 1;
+
+            return window;
+          }),
+        }),
+        undefined,
+        "[window]focusOn"
+      );
+    },
+    resizeWindow: (uuid: string, w: number, h: number) => {
+      set(
+        (state) => ({
+          currentWindows: state.currentWindows.map((window) => {
+            if (window.uuid === uuid) {
+              window.w = w;
+              window.h = h;
+            }
+            return window;
+          }),
+        }),
+        undefined,
+        "[window]resize"
+      );
+    },
   }))
 );

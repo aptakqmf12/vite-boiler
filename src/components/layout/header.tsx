@@ -6,7 +6,7 @@ export default function Header() {
 
   return (
     <header.wrap>
-      <ul.nav>
+      {/* <ul.nav>
         {NAV_LIST.map((nav, i) => {
           const { to, name } = nav;
 
@@ -16,7 +16,7 @@ export default function Header() {
             </li>
           );
         })}
-      </ul.nav>
+      </ul.nav> */}
     </header.wrap>
   );
 }

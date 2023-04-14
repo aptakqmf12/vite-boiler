@@ -6,26 +6,44 @@ import { Fullscreen, FullscreenExit, Close } from "@mui/icons-material";
 import { useWindowStore } from "../../store";
 import type { WindowType } from "../../store";
 
-// x,y : move시 좌표
-// savedX,Y : zustand에 저장될 좌표
 export default function WindowLib(props: WindowType) {
-  const { removeWindow, toggleScreenSize, setSavedPosition, focusWindow } =
-    useWindowStore();
-  const { uuid, component, zIndex = 1, isFullScreen, savedX, savedY } = props;
-
-  const [isDragging, setIsDragging] = useState(false);
-  const [position, setPosition] = useState({
-    currX: savedX || 0,
-    currY: savedY || 0,
-  });
-  const [size, setSize] = useState<{
+  const windowRef = useRef<Draggable>(null);
+  const resize = () => {
+    console.log(windowRef.current?.state);
+  };
+  const {
+    removeWindow,
+    toggleScreenSize,
+    setWindowPosition,
+    focusWindow,
+    resizeWindow,
+  } = useWindowStore();
+  const {
+    uuid,
+    component,
+    isFullScreen,
+    zIndex = 1,
+    x = 0,
+    y = 0,
+    w = 1000,
+    h = 600,
+  } = props;
+  const isFocused = zIndex === 2;
+  // x,y,w,h로 초기화
+  const [{ currX, currY }, setPosition] = useState({ currX: x, currY: y });
+  const [{ width, height }, setSize] = useState<{
     width: string | number;
     height: string | number;
-  }>({ width: 1000, height: 600 });
-  const [{ currX, currY }, { width, height }] = [position, size];
+  }>({ width: w, height: h });
+  const [isDragging, setIsDragging] = useState(false);
 
-  const onClose = () => removeWindow(uuid);
-  const onFocus = () => focusWindow(uuid);
+  const onClose = () => {
+    removeWindow(uuid);
+  };
+  const onFocus = () => {
+    if (isFocused) return;
+    focusWindow(uuid);
+  };
   const onToggleFullScreen = () => toggleScreenSize(uuid);
 
   useEffect(() => {
@@ -33,8 +51,8 @@ export default function WindowLib(props: WindowType) {
       setPosition({ currX: 0, currY: 0 });
       setSize({ width: "100vw", height: "100vh" });
     } else {
-      setPosition({ currX: savedX || 0, currY: savedY || 0 });
-      setSize({ width: 1000, height: 600 });
+      setPosition({ currX: x, currY: y });
+      setSize({ width: w, height: h });
     }
   }, [isFullScreen]);
 
@@ -48,32 +66,34 @@ export default function WindowLib(props: WindowType) {
 
   return (
     <Draggable
-      onMouseDown={() => onFocus()}
+      onMouseDown={onFocus}
       onDrag={(_, data) => {
         setIsDragging(true);
         setPosition({ currX: data.x, currY: data.y });
       }}
       onStop={(_, data) => {
-        setSavedPosition(uuid, { x: data.x, y: data.y });
         setIsDragging(false);
+        if (!isDragging) return;
+        setWindowPosition(uuid, { x: data.x, y: data.y });
       }}
       disabled={isFullScreen}
       bounds={bounds}
       handle={".handle"}
       defaultPosition={{ x: 0, y: 0 }}
       position={{ x: currX, y: currY }}
+      ref={windowRef}
     >
       <div.wrap
         className={isDragging ? "transparent" : ""}
         style={{ width, height, zIndex }}
-        onClick={onFocus}
+        onResize={resize}
       >
         <div.head
           onDoubleClick={onToggleFullScreen}
           isFullScreen={isFullScreen}
           className="handle"
         >
-          <div className="title">{String(isFullScreen)}Risk Zero 3.0</div>
+          <div className="title">{uuid}</div>
 
           <div className="btns">
             <button onClick={onToggleFullScreen}>
