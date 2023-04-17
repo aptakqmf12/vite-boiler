@@ -38,7 +38,7 @@ export const useWindowStore = create<WindowStore>()(
           ],
         }),
         undefined,
-        "[window]add"
+        "[window] add"
       );
     },
     removeWindow: (uuid: string) => {
@@ -49,7 +49,7 @@ export const useWindowStore = create<WindowStore>()(
           ),
         }),
         undefined,
-        "[window]remove"
+        "[window] remove"
       );
     },
     setWindowPosition: (uuid: string, position: { x: number; y: number }) => {
@@ -64,7 +64,7 @@ export const useWindowStore = create<WindowStore>()(
           }),
         }),
         undefined,
-        "[window]position"
+        "[window] position"
       );
     },
     toggleScreenSize: (uuid: string) => {
@@ -78,7 +78,7 @@ export const useWindowStore = create<WindowStore>()(
           }),
         }),
         undefined,
-        "[window]screenSize"
+        "[window] screenSize"
       );
     },
     focusWindow: (uuid: string) => {
@@ -91,7 +91,7 @@ export const useWindowStore = create<WindowStore>()(
           }),
         }),
         undefined,
-        "[window]focusOn"
+        "[window] focusOn"
       );
     },
     resizeWindow: (uuid: string, w: number, h: number) => {
@@ -106,7 +106,7 @@ export const useWindowStore = create<WindowStore>()(
           }),
         }),
         undefined,
-        "[window]resize"
+        "[window] resize"
       );
     },
   }))

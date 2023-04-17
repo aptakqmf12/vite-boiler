@@ -129,7 +129,7 @@ const div = {
     border: 1px #000 solid;
     background-color: white;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
-    border: 1px red solid;
+    border: 1px gray solid;
 
     &.transparent {
       opacity: 0.6;

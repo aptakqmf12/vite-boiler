@@ -1,6 +1,5 @@
 import { useState } from "react";
 import styled from "styled-components";
-import Window from "../../components/layout/window";
 import WindowLib from "../../components/layout/windowLib";
 import Template, {
   TabStatus,
@@ -13,12 +12,14 @@ import {
   Backpack,
   MobileFriendly,
   WindowOutlined,
+  TableBar,
 } from "@mui/icons-material";
 import { useWindowStore } from "../../store";
 
 import RiskEvaluate from "../../components/packages/riskEvaluate";
 import Spreadjs from "../../components/packages/spreadjs";
 import Wijmo from "../../components/packages/wijmo";
+import Signin from "../../components/sign/signin";
 
 export default function MyHome() {
   const { currentWindows, appendWindow } = useWindowStore();
@@ -35,7 +36,7 @@ export default function MyHome() {
         }),
     },
     {
-      icon: <People sx={iconSx} />,
+      icon: <Backpack sx={iconSx} />,
       onclick: () =>
         appendWindow({
           component: <Spreadjs />,
@@ -52,22 +53,37 @@ export default function MyHome() {
           isFullScreen: false,
         }),
     },
+    {
+      icon: <People sx={iconSx} />,
+      onclick: () =>
+        appendWindow({
+          component: <Signin />,
+          isFullScreen: false,
+        }),
+    },
   ];
 
   return (
     <div.wrap>
+      <div>env.MODE : {import.meta.env.MODE}</div>
+      <div>env.BASE_URL : {import.meta.env.BASE_URL}</div>
+      <div>env.PROD : {String(import.meta.env.PROD)}</div>
+      <div>env.DEV : {String(import.meta.env.DEV)}</div>
+      <div>env.VITE_API_URL : {import.meta.env.VITE_API_URL}</div>
       <div.station className="station">
         <div.grid>
-          {FIXED_STATIONS.map((station, i) => (
-            <div onClick={station.onclick} key={i}>
-              {station.icon}
-            </div>
-          ))}
+          <ul>
+            {FIXED_STATIONS.map((station, i) => (
+              <li onClick={station.onclick} key={i}>
+                {station.icon}
+              </li>
+            ))}
+          </ul>
         </div.grid>
       </div.station>
 
       {currentWindows.map((window, i) => (
-        <WindowLib {...window} key={i} />
+        <WindowLib {...window} key={window.uuid} />
       ))}
     </div.wrap>
   );
@@ -86,8 +102,13 @@ const div = {
   `,
 
   grid: styled.div`
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    ul {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      li {
+        cursor: pointer;
+      }
+    }
   `,
 };
