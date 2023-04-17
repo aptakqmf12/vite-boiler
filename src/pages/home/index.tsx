@@ -65,11 +65,6 @@ export default function MyHome() {
 
   return (
     <div.wrap>
-      <div>env.MODE : {import.meta.env.MODE}</div>
-      <div>env.BASE_URL : {import.meta.env.BASE_URL}</div>
-      <div>env.PROD : {String(import.meta.env.PROD)}</div>
-      <div>env.DEV : {String(import.meta.env.DEV)}</div>
-      <div>env.VITE_API_URL : {import.meta.env.VITE_API_URL}</div>
       <div.station className="station">
         <div.grid>
           <ul>
