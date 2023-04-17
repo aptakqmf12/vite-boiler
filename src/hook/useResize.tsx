@@ -6,10 +6,29 @@ interface useDragDivProps {
   h?: number;
 }
 export default function useResize({ target, handle, w, h }: useDragDivProps) {
-  const [size, setSize] = useState<{
+  const [isPressed, setIsPressed] = useState(false);
+  const [readyResize, setReadyResize] = useState(false);
+  const [reSize, setReSize] = useState<{
     width: number | string;
     height: number | string;
   }>({ width: w || 1000, height: h || 600 });
+
+  useEffect(() => {
+    const mousedown = () => {
+      setIsPressed(true);
+    };
+    const mouseup = () => {
+      setIsPressed(false);
+    };
+
+    window.addEventListener("mousedown", mousedown);
+    window.addEventListener("mouseup", mouseup);
+
+    return () => {
+      window.removeEventListener("mousedown", mousedown);
+      window.removeEventListener("mouseup", mouseup);
+    };
+  }, []);
 
   useEffect(() => {
     target.current?.addEventListener("mouseover", (e) => {
@@ -25,37 +44,31 @@ export default function useResize({ target, handle, w, h }: useDragDivProps) {
 
       const THRESHOLD = 5;
 
-      // // 좌상
-      // if (mouseX <= THRESHOLD && mouseY <= THRESHOLD) {
-      //   (e.target as HTMLElement).style.cursor = "nw-resize";
-      // }
-      // // 좌하
-      // else if (mouseX <= THRESHOLD && mouseY >= height - THRESHOLD) {
-      //   (e.target as HTMLElement).style.cursor = "ne-resize";
-      // }
-      // // 우상
-      // else if (mouseX >= width - THRESHOLD && mouseY <= THRESHOLD) {
-      //   (e.target as HTMLElement).style.cursor = "ne-resize";
-      // }
-      // // 우하
-      // else if (mouseX >= width - THRESHOLD && mouseY >= height - THRESHOLD) {
-      //   (e.target as HTMLElement).style.cursor = "se-resize";
-      // }
-      // // 좌우변
-      // else if (mouseX <= THRESHOLD || mouseX >= width - THRESHOLD) {
-      //   (e.target as HTMLElement).style.cursor = "ew-resize";
-      // }
-      // // 상하변
-      // else if (mouseY <= THRESHOLD || mouseY >= height - THRESHOLD) {
-      //   (e.target as HTMLElement).style.cursor = "n-resize";
-      // } else if (listsOnPoint.includes(handle.current!!)) {
-      //   (e.target as HTMLElement).style.cursor = "move";
-      // }
-      // // 나머지 경우
-      // else {
-      //   (e.target as HTMLElement).style.cursor = "default";
-      // }
+      // 좌하
+      if (mouseX <= THRESHOLD && mouseY >= height - THRESHOLD) {
+        (e.target as HTMLElement).style.cursor = "ne-resize";
+      }
+      // 우하
+      if (mouseX >= width - THRESHOLD && mouseY >= height - THRESHOLD) {
+        (e.target as HTMLElement).style.cursor = "se-resize";
+      }
+      // 좌우
+      else if (mouseX <= THRESHOLD || mouseX >= width - THRESHOLD) {
+        (e.target as HTMLElement).style.cursor = "ew-resize";
+      }
+      // 하
+      else if (mouseY >= height - THRESHOLD) {
+        (e.target as HTMLElement).style.cursor = "n-resize";
+      }
+      // move
+      else if (listsOnPoint.includes(handle.current!!)) {
+        (e.target as HTMLElement).style.cursor = "move";
+      }
+      // 나머지 경우
+      else {
+        (e.target as HTMLElement).style.cursor = "default";
+      }
     });
   }, []);
-  return { size, setSize };
+  return { reSize, setReSize, isPressed };
 }

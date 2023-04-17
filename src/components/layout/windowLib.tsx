@@ -2,15 +2,15 @@ import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Draggable from "react-draggable";
 import { Fullscreen, FullscreenExit, Close } from "@mui/icons-material";
+import useResize from "../../hook/useResize";
 
 import { useWindowStore } from "../../store";
 import type { WindowType } from "../../store";
 
 export default function WindowLib(props: WindowType) {
-  const windowRef = useRef<Draggable>(null);
-  const resize = () => {
-    console.log(windowRef.current?.state);
-  };
+  const windowRef = useRef<HTMLDivElement>(null);
+  const handleRef = useRef<HTMLDivElement>(null);
+
   const {
     removeWindow,
     toggleScreenSize,
@@ -64,6 +64,11 @@ export default function WindowLib(props: WindowType) {
     bottom: window.innerHeight - THRESHOLD,
   };
 
+  // const { reSize, setReSize, isPressed } = useResize({
+  //   target: windowRef,
+  //   handle: handleRef,
+  // });
+
   return (
     <Draggable
       onMouseDown={onFocus}
@@ -81,17 +86,17 @@ export default function WindowLib(props: WindowType) {
       handle={".handle"}
       defaultPosition={{ x: 0, y: 0 }}
       position={{ x: currX, y: currY }}
-      ref={windowRef}
     >
       <div.wrap
         className={isDragging ? "transparent" : ""}
         style={{ width, height, zIndex }}
-        onResize={resize}
+        ref={windowRef}
       >
         <div.head
           onDoubleClick={onToggleFullScreen}
           isFullScreen={isFullScreen}
           className="handle"
+          ref={handleRef}
         >
           <div className="title">{uuid}</div>
 
@@ -124,6 +129,7 @@ const div = {
     border: 1px #000 solid;
     background-color: white;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+    border: 1px red solid;
 
     &.transparent {
       opacity: 0.6;
@@ -150,5 +156,6 @@ const div = {
   body: styled.div`
     background-color: #ffffff;
     height: calc(100% - 30px);
+    overflow: auto;
   `,
 };

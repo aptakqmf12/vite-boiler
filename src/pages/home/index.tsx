@@ -17,40 +17,52 @@ import {
 import { useWindowStore } from "../../store";
 
 import RiskEvaluate from "../../components/packages/riskEvaluate";
+import Spreadjs from "../../components/packages/spreadjs";
+import Wijmo from "../../components/packages/wijmo";
 
 export default function MyHome() {
   const { currentWindows, appendWindow } = useWindowStore();
 
   const iconSx = { width: 80, height: 80 };
+
+  const FIXED_STATIONS = [
+    {
+      icon: <Home sx={iconSx} />,
+      onclick: () =>
+        appendWindow({
+          component: <RiskEvaluate />,
+          isFullScreen: false,
+        }),
+    },
+    {
+      icon: <People sx={iconSx} />,
+      onclick: () =>
+        appendWindow({
+          component: <Spreadjs />,
+          w: 1200,
+          h: 800,
+          isFullScreen: false,
+        }),
+    },
+    {
+      icon: <DocumentScanner sx={iconSx} />,
+      onclick: () =>
+        appendWindow({
+          component: <Wijmo />,
+          isFullScreen: false,
+        }),
+    },
+  ];
+
   return (
     <div.wrap>
       <div.station className="station">
         <div.grid>
-          <div
-            onClick={() =>
-              appendWindow({
-                component: <RiskEvaluate />,
-                isFullScreen: false,
-              })
-            }
-          >
-            <Home sx={iconSx} />
-          </div>
-          <div
-            onClick={() =>
-              appendWindow({
-                component: <div>people</div>,
-                isFullScreen: false,
-              })
-            }
-          >
-            <People sx={iconSx} />
-          </div>
-
-          <DocumentScanner sx={iconSx} />
-          <Backpack sx={iconSx} />
-          <MobileFriendly sx={iconSx} />
-          <WindowOutlined sx={iconSx} />
+          {FIXED_STATIONS.map((station, i) => (
+            <div onClick={station.onclick} key={i}>
+              {station.icon}
+            </div>
+          ))}
         </div.grid>
       </div.station>
 
