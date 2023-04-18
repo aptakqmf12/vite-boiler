@@ -30,9 +30,7 @@ export default function useDragDiv({
 
       setIsPressed(true);
     };
-    const mouseUp = (e: MouseEvent) => {
-      setIsPressed(false);
-    };
+    const mouseUp = (e: MouseEvent) => setIsPressed(false);
 
     target.current?.addEventListener("mousedown", mouseDown);
     target.current?.addEventListener("mouseup", mouseUp);

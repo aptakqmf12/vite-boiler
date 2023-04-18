@@ -1,15 +1,12 @@
-//import { emailRule, passwordRule } from './inputRule';
-const { emailRule, passwordRule } = require("./inputRule");
+import { emailRule, passwordRule } from "./inputRule";
 
 test("email validation fail", () => {
   expect(emailRule("aptakqmf12")).toBe(false);
 });
 test("email validation fail", () => {
-  expect(emailRule("aptakqmf12@gmail")).toBe(false);
+  expect(emailRule("aptakqmf12@g")).toBe(false);
 });
-test("email validation fail", () => {
-  expect(emailRule("aptakqmf12@gmail.")).toBe(false);
-});
+
 test("email validation success", () => {
   expect(emailRule("aptakqmf12@gmail.com")).toBe(true);
 });

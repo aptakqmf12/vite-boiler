@@ -12,7 +12,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   // React.StrictMode 사용시 MUI에서 findDOMNode 충돌
   <>
     <QueryClientProvider client={client}>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
 
       <Router>
         <App />

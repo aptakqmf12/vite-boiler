@@ -1,124 +1,166 @@
 import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import useDragDiv from "../../hook/useDragDiv";
+import Draggable from "react-draggable";
+import { Menu, MenuItem, Avatar } from "@mui/material";
+import {
+  Fullscreen,
+  FullscreenExit,
+  Close,
+  Remove,
+  Settings,
+} from "@mui/icons-material";
+import { useWindowStore } from "../../store";
+import type { WindowType } from "../../store";
+
 import useResize from "../../hook/useResize";
-import { Fullscreen, FullscreenExit, Close } from "@mui/icons-material";
 
-interface WindowProps {
-  children: React.ReactNode;
-}
+export type SizeType = {
+  width: string | number;
+  height: string | number;
+};
 
-export default function Window({ children }: WindowProps) {
+export default function WindowLib(props: WindowType) {
   const windowRef = useRef<HTMLDivElement>(null);
-  const headRef = useRef<HTMLDivElement>(null);
+  const handleRef = useRef<HTMLDivElement>(null);
+  const resizeRef = useRef<HTMLDivElement>(null);
+  const {
+    removeWindow,
+    toggleScreenSize,
+    setWindowPosition,
+    focusWindow,
+    toggleShowWindow,
+  } = useWindowStore();
+  const { uuid, component, isFullScreen, isShow, zIndex, x, y, w, h } = props;
+  const isFocused = zIndex === 2;
 
-  const [isFullScreen, setIsFullScreen] = useState(false);
-  const [display, setDisplay] = useState<boolean>(true);
-
-  // drag 로직
-  const { position, setPosition } = useDragDiv({
-    target: windowRef,
-    handle: headRef,
-    isFullScreen,
+  const [menu, setMenu] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [{ currX, currY }, setPosition] = useState({ currX: x, currY: y });
+  const [{ width, height }, setSize] = useState<SizeType>({
+    width: w,
+    height: h,
   });
 
-  // resize 로직
-  const [size, setSize] = useState<{
-    width: number | string;
-    height: number | string;
-  }>({ width: 1000, height: 600 });
+  const onClose = () => removeWindow(uuid);
 
-  // const { size, setSize } = useResize({
-  //   target: windowRef,
-  //   handle: headRef,
-  // });
-
-  // fullScreen 로직
-  const fullScreen = () => {
-    const rect = windowRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const centerPosition = {
-      x: rect.left + rect.width / 2,
-      y: rect.top + rect.height / 2,
-    };
-    console.log(centerPosition);
-
-    if (isFullScreen === true) {
-      setSize({ width: 1000, height: 600 }); //FIXME: 저장된값으로
-      setPosition({ x: 0, y: 0 }); //FIXME: 저장된값으로
-    } else {
-      setSize({ width: "100vw", height: "100vh" });
-      setPosition({ x: 0, y: 0 });
-    }
-    setIsFullScreen(!isFullScreen);
+  const onFocus = () => {
+    if (isFocused) return;
+    focusWindow(uuid);
   };
+  const onToggleFullScreen = () => toggleScreenSize(uuid);
+  const onHide = () => toggleShowWindow(uuid, false);
 
   useEffect(() => {
-    headRef.current?.addEventListener("dblclick", fullScreen);
-    return () => {
-      headRef.current?.removeEventListener("dblclick", fullScreen);
-    };
+    if (isFullScreen) {
+      setPosition({ currX: 0, currY: 0 });
+      setSize({ width: "100vw", height: "100vh" });
+    } else {
+      setPosition({ currX: x, currY: y });
+      setSize({ width: w, height: h });
+    }
   }, [isFullScreen]);
 
-  const close = () => {
-    setDisplay(!display);
+  const THRESHOLD = 30;
+  const bounds = {
+    left: (width as number) * -1 + THRESHOLD,
+    top: -10,
+    right: window.innerWidth - THRESHOLD,
+    bottom: window.innerHeight - THRESHOLD,
   };
 
+  // 리사이즈
+  // const { isPressed } = useResize({
+  //   target: windowRef,
+  //   side: resizeRef,
+  //   setSize: setSize,
+  // });
+
+  if (isShow === false) return <></>;
+
   return (
-    <div.wrap
-      style={{
-        display: display ? "block" : "none",
-        left: position.x,
-        top: position.y,
-        width: size.width,
-        height: size.height,
+    <Draggable
+      onMouseDown={onFocus}
+      onDrag={(_, data) => {
+        setIsDragging(true);
+        setPosition({ currX: data.x, currY: data.y });
       }}
-      ref={windowRef}
+      onStop={(_, data) => {
+        setIsDragging(false);
+        if (!isDragging) return;
+        setWindowPosition(uuid, { x: data.x, y: data.y });
+      }}
+      disabled={isFullScreen}
+      bounds={bounds}
+      handle={".handle"}
+      defaultPosition={{ x: 0, y: 0 }}
+      position={{ x: currX, y: currY }}
     >
-      <div.resize>
-        <div.head ref={headRef}>
-          <div className="title">Risk Zero 3.0</div>
+      <div.wrap
+        className={isDragging ? "transparent" : ""}
+        style={{ width, height, zIndex }}
+        ref={windowRef}
+      >
+        <div.head
+          onDoubleClick={onToggleFullScreen}
+          isFullScreen={isFullScreen}
+          className="handle"
+          ref={handleRef}
+        >
+          <div className="title">{uuid}</div>
 
           <div className="btns">
-            <button onClick={fullScreen}>
+            <button onClick={() => setMenu(true)}>
+              <Settings />
+            </button>
+
+            <button onClick={onHide}>
+              <Remove />
+            </button>
+            <button onClick={onToggleFullScreen}>
               {isFullScreen ? <FullscreenExit /> : <Fullscreen />}
             </button>
 
-            <button onClick={close}>
+            <button onClick={onClose}>
               <Close />
             </button>
           </div>
         </div.head>
 
-        <div.body>{children}</div.body>
-      </div.resize>
-    </div.wrap>
+        <div.body>{component}</div.body>
+
+        <div.side ref={resizeRef}></div.side>
+      </div.wrap>
+    </Draggable>
   );
 }
 
 const div = {
   wrap: styled.div`
     position: fixed;
+    left: 0;
+    top: 0;
+    color: black;
+    margin: auto;
+    user-select: none;
+    background: #ffffff;
     border: 1px #000 solid;
     background-color: white;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
-    /* transition: width 0.3s ease, height 0.3s ease; */
-  `,
+    border: 1px gray solid;
 
-  resize: styled.div`
-    height: 100%;
+    &.transparent {
+      opacity: 0.6;
+    }
   `,
-
-  head: styled.div`
+  head: styled.div<{ isFullScreen: boolean }>`
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 30px;
     padding: 0 5px;
-
-    box-sizing: border-box;
+    box-sizing: border-wrap;
     background-color: #e2e2e2;
-    cursor: move;
+    cursor: ${(p) => (p.isFullScreen ? "default" : "move")};
 
     .title {
     }
@@ -127,8 +169,20 @@ const div = {
       gap: 2px;
     }
   `,
+
   body: styled.div`
     background-color: #ffffff;
     height: calc(100% - 30px);
+    overflow: auto;
+  `,
+
+  side: styled.div`
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    width: 10px;
+    height: 10px;
+    border: 1px black dashed;
+    cursor: se-resize;
   `,
 };

@@ -1,74 +1,63 @@
-import { useState, useEffect, RefObject } from "react";
-interface useDragDivProps {
+import {
+  useState,
+  useEffect,
+  RefObject,
+  Dispatch,
+  SetStateAction,
+} from "react";
+import type { SizeType } from "../components/layout/window";
+
+interface useResizeProps {
   target: RefObject<HTMLDivElement>;
-  handle: RefObject<HTMLDivElement>;
-  w?: number;
-  h?: number;
+  side: RefObject<HTMLDivElement>;
+  setSize: Dispatch<SetStateAction<SizeType>>;
 }
-export default function useResize({ target, handle, w, h }: useDragDivProps) {
+
+export default function useResize({ target, side, setSize }: useResizeProps) {
   const [isPressed, setIsPressed] = useState(false);
-  const [readyResize, setReadyResize] = useState(false);
-  const [reSize, setReSize] = useState<{
-    width: number | string;
-    height: number | string;
-  }>({ width: w || 1000, height: h || 600 });
+
+  const [prevWidth, setPrevWidth] = useState();
+  const [prevHeight, setPrevHeight] = useState();
+  const [currentWidth, setCurrentWidth] = useState();
+  const [currentHeight, setCurrentHeight] = useState();
 
   useEffect(() => {
-    const mousedown = () => {
-      setIsPressed(true);
-    };
-    const mouseup = () => {
-      setIsPressed(false);
-    };
+    const mouseDown = () => setIsPressed(true);
+    const mouseUp = () => setIsPressed(false);
 
-    window.addEventListener("mousedown", mousedown);
-    window.addEventListener("mouseup", mouseup);
+    side.current?.addEventListener("mousedown", mouseDown);
+    window.addEventListener("mouseup", mouseUp);
 
     return () => {
-      window.removeEventListener("mousedown", mousedown);
-      window.removeEventListener("mouseup", mouseup);
+      side.current?.removeEventListener("mousedown", mouseDown);
+      window.removeEventListener("mouseup", mouseUp);
     };
   }, []);
 
-  useEffect(() => {
-    target.current?.addEventListener("mouseover", (e) => {
-      const listsOnPoint = document.elementsFromPoint(e.clientX, e.clientY);
+  useEffect(() => {}, []);
 
-      const rect = target.current?.getBoundingClientRect();
-      if (!rect) return;
+  //   useEffect(() => {
+  //     if (!target.current) return;
+  //     const rect = target.current.getBoundingClientRect();
 
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
-      const width = rect.width;
-      const height = rect.height;
+  //     const moveFn = (e: MouseEvent) => {
+  //       const dx = e.clientX - rect.right;
+  //       const dy = e.clientY - rect.bottom;
 
-      const THRESHOLD = 5;
+  //       setSize((prevSize) => ({
+  //         width: Number(prevSize.width) + 1,
+  //         height: Number(prevSize.height) + 1,
+  //       }));
+  //     };
 
-      // 좌하
-      if (mouseX <= THRESHOLD && mouseY >= height - THRESHOLD) {
-        (e.target as HTMLElement).style.cursor = "ne-resize";
-      }
-      // 우하
-      if (mouseX >= width - THRESHOLD && mouseY >= height - THRESHOLD) {
-        (e.target as HTMLElement).style.cursor = "se-resize";
-      }
-      // 좌우
-      else if (mouseX <= THRESHOLD || mouseX >= width - THRESHOLD) {
-        (e.target as HTMLElement).style.cursor = "ew-resize";
-      }
-      // 하
-      else if (mouseY >= height - THRESHOLD) {
-        (e.target as HTMLElement).style.cursor = "n-resize";
-      }
-      // move
-      else if (listsOnPoint.includes(handle.current!!)) {
-        (e.target as HTMLElement).style.cursor = "move";
-      }
-      // 나머지 경우
-      else {
-        (e.target as HTMLElement).style.cursor = "default";
-      }
-    });
-  }, []);
-  return { reSize, setReSize, isPressed };
+  //     if (isPressed) {
+  //       window.addEventListener("mousemove", moveFn);
+  //     }
+
+  //     return () => {
+  //       window.removeEventListener("mousemove", moveFn);
+  //     };
+  //   }, [isPressed]);
+
+  return { isPressed };
 }
