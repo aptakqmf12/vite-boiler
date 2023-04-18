@@ -1,19 +1,6 @@
-import { useState } from "react";
 import styled from "styled-components";
-import WindowLib from "../../components/layout/windowLib";
-import Template, {
-  TabStatus,
-  TemplateProps,
-} from "../../components/layout/template";
-import {
-  Home,
-  People,
-  DocumentScanner,
-  Backpack,
-  MobileFriendly,
-  WindowOutlined,
-  TableBar,
-} from "@mui/icons-material";
+import WindowLib from "../../components/layout/window";
+import { Home, People, DocumentScanner, Backpack } from "@mui/icons-material";
 import { useWindowStore } from "../../store";
 
 import RiskEvaluate from "../../components/packages/riskEvaluate";
@@ -29,42 +16,24 @@ export default function MyHome() {
   const FIXED_STATIONS = [
     {
       icon: <Home sx={iconSx} />,
-      onclick: () =>
-        appendWindow({
-          component: <RiskEvaluate />,
-          isFullScreen: false,
-        }),
+      onclick: () => appendWindow({ component: <RiskEvaluate /> }),
     },
     {
       icon: <Backpack sx={iconSx} />,
-      onclick: () =>
-        appendWindow({
-          component: <Spreadjs />,
-          w: 1200,
-          h: 800,
-          isFullScreen: false,
-        }),
+      onclick: () => appendWindow({ component: <Spreadjs />, w: 1200, h: 800 }),
     },
     {
       icon: <DocumentScanner sx={iconSx} />,
-      onclick: () =>
-        appendWindow({
-          component: <Wijmo />,
-          isFullScreen: false,
-        }),
+      onclick: () => appendWindow({ component: <Wijmo /> }),
     },
     {
       icon: <People sx={iconSx} />,
-      onclick: () =>
-        appendWindow({
-          component: <Signin />,
-          isFullScreen: false,
-        }),
+      onclick: () => appendWindow({ component: <Signin /> }),
     },
   ];
 
   return (
-    <div.wrap>
+    <>
       <div.station className="station">
         <div.grid>
           <ul>
@@ -80,13 +49,11 @@ export default function MyHome() {
       {currentWindows.map((window, i) => (
         <WindowLib {...window} key={window.uuid} />
       ))}
-    </div.wrap>
+    </>
   );
 }
 
 const div = {
-  wrap: styled.div``,
-
   station: styled.div`
     display: flex;
     justify-content: center;
