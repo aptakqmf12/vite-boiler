@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Button } from "@mui/material";
-
-// More on how to set up stories at: https://storybook.js.org/docs/7.0/react/writing-stories/introduction
+// import Button from "./Button";
 const meta = {
   title: "Example/Button",
   component: Button,
@@ -14,17 +13,48 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// More on writing stories with args: https://storybook.js.org/docs/7.0/react/writing-stories/args
 export const Primary: Story = {
   args: {
-    disabled: false,
+    children: "Test",
     size: "small",
     variant: "outlined",
-    children: "Test",
     color: "info",
+    disabled: false,
+    sx: {
+      width: 100,
+    },
   },
-};
-
-export const Secondary: Story = {
-  args: {},
+  // https://storybook.js.org/docs/react/essentials/controls
+  argTypes: {
+    size: {
+      options: ["small", "medium", "large"],
+      control: { type: "radio" },
+    },
+    variant: {
+      options: ["text", "outlined", "contained"],
+      control: { type: "select" },
+    },
+    color: {
+      options: ["primary", "secondary", "success", "error", "info"],
+      control: { type: "select" },
+    },
+  },
+  // args: {
+  //   width: 60,
+  //   height: 30,
+  //   color: "red",
+  //   disabled: false,
+  //   type: "outline",
+  //   valiant: "default",
+  // },
+  // argTypes: {
+  //   type: {
+  //     options: ["outline", "fill"],
+  //     control: { type: "radio" },
+  //   },
+  //   valiant: {
+  //     options: ["primary", "default"],
+  //     control: { type: "radio" },
+  //   },
+  // },
 };
