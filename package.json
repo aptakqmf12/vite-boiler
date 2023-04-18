@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "start": "vite preview",
-    "storybook": "storybook dev -p 6006"
+    "storybook": "storybook dev -p 6006",
+    "test": "jest"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
@@ -28,6 +29,7 @@
     "dayjs": "^1.11.7",
     "file-saver": "^2.0.5",
     "framer-motion": "^10.10.0",
+    "jest": "^27.5.1",
     "lodash": "^4.17.21",
     "re-resizable": "^6.9.9",
     "react": "^18.2.0",
@@ -51,6 +53,7 @@
     "@storybook/react": "^7.0.2",
     "@storybook/react-vite": "^7.0.2",
     "@types/file-saver": "^2.0.5",
+    "@types/jest": "^29.5.0",
     "@types/lodash": "^4.14.192",
     "@types/node": "^18.15.11",
     "@types/react": "^18.0.28",
