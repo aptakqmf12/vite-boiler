@@ -12,8 +12,6 @@ import {
 import { useWindowStore } from "../../store";
 import type { WindowType } from "../../store";
 
-import useResize from "../../hook/useResize";
-
 export type SizeType = {
   width: string | number;
   height: string | number;
