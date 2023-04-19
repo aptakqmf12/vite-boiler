@@ -26,7 +26,7 @@ interface WindowStore {
   removeWindow: (uuid: string) => void;
   setWindowPosition: (uuid: string, position: { x: number; y: number }) => void;
   toggleScreenSize: (uuid: string) => void;
-  toggleShowWindow: (uuid: string, bool: boolean) => void;
+  toggleShowWindow: (uuid: string) => void;
   focusWindow: (uuid: string) => void;
   resizeWindow: (uuid: string, w: number, h: number) => void;
 }
@@ -109,7 +109,7 @@ export const useWindowStore = create<WindowStore>()(
         "[window] focusOn"
       );
     },
-    toggleShowWindow: (uuid: string, bool: boolean) => {
+    toggleShowWindow: (uuid: string) => {
       set(
         (state) => ({
           currentWindows: state.currentWindows.map((window) => {
