@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Draggable from "react-draggable";
-import { Menu, MenuItem, Avatar } from "@mui/material";
 import {
   Fullscreen,
   FullscreenExit,
@@ -31,7 +30,6 @@ export default function WindowLib(props: WindowType) {
   const { uuid, component, isFullScreen, isShow, zIndex, x, y, w, h } = props;
   const isFocused = zIndex === 2;
 
-  const [menu, setMenu] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [{ currX, currY }, setPosition] = useState({ currX: x, currY: y });
   const [{ width, height }, setSize] = useState<SizeType>({
@@ -46,7 +44,7 @@ export default function WindowLib(props: WindowType) {
     focusWindow(uuid);
   };
   const onToggleFullScreen = () => toggleScreenSize(uuid);
-  const onHide = () => toggleShowWindow(uuid, false);
+  const onHide = () => toggleShowWindow(uuid);
 
   useEffect(() => {
     if (isFullScreen) {
@@ -107,9 +105,9 @@ export default function WindowLib(props: WindowType) {
           <div className="title">{uuid}</div>
 
           <div className="btns">
-            <button onClick={() => setMenu(true)}>
+            {/* <button>
               <Settings />
-            </button>
+            </button> */}
 
             <button onClick={onHide}>
               <Remove />

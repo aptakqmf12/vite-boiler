@@ -11,7 +11,7 @@ export default function Header() {
       <ul.nav>
         {currentWindows.map((window, i) => (
           <li
-            onClick={() => toggleShowWindow(window.uuid, true)}
+            onClick={() => toggleShowWindow(window.uuid)}
             style={{
               backgroundColor: window.isShow
                 ? "rgb(53, 153, 199)"
