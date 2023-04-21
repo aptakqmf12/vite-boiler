@@ -38,13 +38,13 @@ export const useWindowStore = create<WindowStore>()(
   devtools((set) => ({
     currentWindows: [],
     appendWindow: (props) => {
+      const isExistingWindow = useWindowStore
+        .getState()
+        .currentWindows.some((window) => window.name === props.name);
+
+      if (isExistingWindow) return;
       set(
         (state) => {
-          const isExist = state.currentWindows.some(
-            (window) => window.name === props.name
-          );
-          if (isExist) return state;
-
           return {
             currentWindows: [
               ...state.currentWindows,
@@ -63,7 +63,6 @@ export const useWindowStore = create<WindowStore>()(
             ],
           };
         },
-
         undefined,
         "[window] add"
       );
@@ -135,7 +134,6 @@ export const useWindowStore = create<WindowStore>()(
         "[window] show"
       );
     },
-
     resizeWindow: (uuid: string, w: number, h: number) => {
       set(
         (state) => ({
