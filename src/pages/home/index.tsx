@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import WindowLib from "../../components/layout/window";
+import Window from "../../components/layout/window";
 import { Home, People, DocumentScanner, Backpack } from "@mui/icons-material";
 import { useWindowStore } from "../../store";
 
@@ -55,7 +55,7 @@ export default function MyHome() {
       </div.station>
 
       {currentWindows.map((window, i) => (
-        <WindowLib {...window} key={window.uuid} />
+        <Window {...window} key={window.uuid} />
       ))}
     </>
   );

@@ -1,10 +1,6 @@
 import config from "../../.storybook/main";
 import { AxiosResponse } from "axios";
 
-export interface GlobalType {
-  id: number;
-}
-
 export interface ResponseData<T> {
   data: {
     result: T;
