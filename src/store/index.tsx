@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { v4 as uuidv4 } from "uuid";
 export interface WindowType {
+  name: string;
   uuid: string;
   component: React.ReactNode;
   isFullScreen: boolean;
@@ -14,6 +15,8 @@ export interface WindowType {
 }
 
 type AppendWindowProps = Pick<WindowType, "component"> & {
+  name: string;
+  zIndex?: number;
   x?: number;
   y?: number;
   w?: number;
@@ -36,22 +39,31 @@ export const useWindowStore = create<WindowStore>()(
     currentWindows: [],
     appendWindow: (props) => {
       set(
-        (state) => ({
-          currentWindows: [
-            ...state.currentWindows,
-            {
-              uuid: uuidv4(),
-              component: props.component,
-              isFullScreen: false,
-              isShow: true,
-              zIndex: 1,
-              x: props.x || 10,
-              y: props.y || 10,
-              w: props.w || 1000,
-              h: props.h || 600,
-            },
-          ],
-        }),
+        (state) => {
+          const isExist = state.currentWindows.some(
+            (window) => window.name === props.name
+          );
+          if (isExist) return state;
+
+          return {
+            currentWindows: [
+              ...state.currentWindows,
+              {
+                name: props.name,
+                uuid: uuidv4(),
+                component: props.component,
+                isFullScreen: false,
+                isShow: true,
+                zIndex: props.zIndex || 1,
+                x: props.x || 10,
+                y: props.y || 10,
+                w: props.w || 1000,
+                h: props.h || 600,
+              },
+            ],
+          };
+        },
+
         undefined,
         "[window] add"
       );

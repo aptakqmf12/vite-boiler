@@ -27,7 +27,8 @@ export default function WindowLib(props: WindowType) {
     focusWindow,
     toggleShowWindow,
   } = useWindowStore();
-  const { uuid, component, isFullScreen, isShow, zIndex, x, y, w, h } = props;
+  const { name, uuid, component, isFullScreen, isShow, zIndex, x, y, w, h } =
+    props;
   const isFocused = zIndex === 2;
 
   const [isDragging, setIsDragging] = useState(false);
@@ -102,7 +103,7 @@ export default function WindowLib(props: WindowType) {
           className="handle"
           ref={handleRef}
         >
-          <div className="title">{uuid}</div>
+          <div className="title">{name}</div>
 
           <div className="btns">
             {/* <button>

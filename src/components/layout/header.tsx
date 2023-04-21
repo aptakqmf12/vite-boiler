@@ -19,7 +19,7 @@ export default function Header() {
             }}
             key={i}
           >
-            {window.uuid.slice(0, 5)}
+            {window.name}
           </li>
         ))}
       </ul.nav>

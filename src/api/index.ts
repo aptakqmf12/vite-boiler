@@ -1,8 +1,8 @@
 import axios from "axios";
+import { requestAccessToken } from "./sign";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
-//test
 const defaultInstance = () => {
   return axios.create({
     baseURL: BASE_URL,
@@ -10,22 +10,21 @@ const defaultInstance = () => {
 };
 
 const authInstance = (options?: any) => {
-  const token = "token";
+  const accessToken = localStorage.getItem("access_token");
+
   return axios.create({
     baseURL: BASE_URL,
     headers: {
-      Authorization: `Bearer` + token,
+      Authorization: `Bearer ${accessToken}`,
       ...options,
     },
   });
 };
 
-export const interceptedApi = defaultInstance().interceptors.request.use(
-  function (config) {
-    config.baseURL += "/posts";
-    return config;
-  }
-);
+authInstance().interceptors.request.use((req) => {
+  console.log("auth 요청이므로 accessToken의 expire를 판단해야함");
+  return req;
+});
 
-export const defaultApi = defaultInstance();
-export const authApi = authInstance();
+export const api = defaultInstance();
+export const apiAuth = authInstance();

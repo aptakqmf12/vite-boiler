@@ -1,3 +1,4 @@
+import { useState } from "react";
 import styled from "styled-components";
 import WindowLib from "../../components/layout/window";
 import { Home, People, DocumentScanner, Backpack } from "@mui/icons-material";
@@ -16,19 +17,26 @@ export default function MyHome() {
   const FIXED_STATIONS = [
     {
       icon: <Home sx={iconSx} />,
-      onclick: () => appendWindow({ component: <RiskEvaluate /> }),
+      onclick: () =>
+        appendWindow({ name: "위험성 평가", component: <RiskEvaluate /> }),
     },
     {
       icon: <Backpack sx={iconSx} />,
-      onclick: () => appendWindow({ component: <Spreadjs />, w: 1200, h: 800 }),
+      onclick: () =>
+        appendWindow({
+          name: "엑셀 시트",
+          component: <Spreadjs />,
+          w: 1200,
+          h: 800,
+        }),
     },
     {
       icon: <DocumentScanner sx={iconSx} />,
-      onclick: () => appendWindow({ component: <Wijmo /> }),
+      onclick: () => appendWindow({ name: "위즈모", component: <Wijmo /> }),
     },
     {
       icon: <People sx={iconSx} />,
-      onclick: () => appendWindow({ component: <Signin /> }),
+      onclick: () => appendWindow({ name: "로그인", component: <Signin /> }),
     },
   ];
 
