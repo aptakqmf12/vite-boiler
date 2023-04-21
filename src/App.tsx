@@ -4,6 +4,10 @@ import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { theme } from "./theme";
 import useDisplay from "./hook/useDisplay";
 import RouterComponents from "./route";
+import NanumGothicLight from "../public/fonts/NanumGothicLight.ttf";
+import NanumGothicMedium from "../public/fonts/NanumGothic.ttf";
+import NanumGothicBold from "../public/fonts/NanumGothicBold.ttf";
+import NanumGothicExtraBold from "../public/fonts/NanumGothicExtraBold.ttf";
 
 function App() {
   const display = useDisplay();
@@ -21,6 +25,32 @@ function App() {
 }
 
 const GlobalStyle = createGlobalStyle`
+
+  @font-face {
+    font-family: "Nanum Gothic";
+    src: url(${NanumGothicLight});
+    font-weight: 200;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Nanum Gothic";
+    src: url(${NanumGothicMedium});
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Nanum Gothic";
+    src: url(${NanumGothicBold});
+    font-weight: 600;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Nanum Gothic";
+    src: url(${NanumGothicExtraBold});
+    font-weight: 800;
+    font-style: normal;
+  }
+
   html, body, div, span, applet, object, iframe,
   h1, h2, h3, h4, h5, h6, p, blockquote, pre,
   a, abbr, acronym, address, big, cite, code,
@@ -47,6 +77,8 @@ const GlobalStyle = createGlobalStyle`
   }
   body {
     line-height: 1;
+    font-family: "Nanum Gothic";
+    font-weight: 200;
   }
   ol, ul, li {
     list-style: none;
