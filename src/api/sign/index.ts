@@ -42,7 +42,6 @@ interface RefreshResponse {
 }
 
 export const requestAccessToken = async () => {
-  console.log("requestAccessToken");
   return await apiAuth
     .post(`/auth/getAccessToken`, undefined, {
       headers: {
@@ -54,6 +53,7 @@ export const requestAccessToken = async () => {
         const { accessToken, refreshToken } = res.data.data.result;
         setStorageAndHeaderByToken(accessToken, refreshToken);
       } else {
+        // 로그아웃을 시켜야할수도
       }
     });
 };
@@ -65,9 +65,10 @@ const setStorageAndHeaderByToken = (
   axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
   const {
-    exp: key,
+    k: key,
+    exp: expire,
     n: name,
-    cc: campanyCode,
+    cc: companyCode,
     dc: deptCode,
     ut: userType,
   } = parseAccessToken(accessToken);
@@ -76,6 +77,6 @@ const setStorageAndHeaderByToken = (
   localStorage.setItem("refresh_token", refreshToken);
   localStorage.setItem(
     "user_info",
-    JSON.stringify({ key, name, campanyCode, deptCode, userType })
+    JSON.stringify({ key, expire, name, companyCode, deptCode, userType })
   );
 };

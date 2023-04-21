@@ -1,5 +1,6 @@
 import axios from "axios";
 import { requestAccessToken } from "./sign";
+import { ResponseStatus } from "../types";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -21,10 +22,13 @@ const authInstance = (options?: any) => {
   });
 };
 
-authInstance().interceptors.request.use((req) => {
-  console.log("auth 요청이므로 accessToken의 expire를 판단해야함");
-  return req;
-});
-
 export const api = defaultInstance();
 export const apiAuth = authInstance();
+
+apiAuth.interceptors.response.use((res) => {
+  if (res.status === ResponseStatus.TOKEN_EXPIRED) {
+    // requestAccessToken
+  }
+
+  return res;
+});
