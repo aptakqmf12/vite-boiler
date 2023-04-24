@@ -23,17 +23,6 @@ export default function Header() {
           </li>
         ))}
       </ul.nav>
-      {/* <ul.nav>
-        {NAV_LIST.map((nav, i) => {
-          const { to, name } = nav;
-
-          return (
-            <li key={i}>
-              <Link to={to}>{name}</Link>
-            </li>
-          );
-        })}
-      </ul.nav> */}
     </header.wrap>
   );
 }

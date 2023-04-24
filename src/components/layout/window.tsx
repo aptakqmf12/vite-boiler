@@ -66,11 +66,6 @@ export default function WindowLib(props: WindowType) {
   };
 
   // 리사이즈
-  // const { isPressed } = useResize({
-  //   target: windowRef,
-  //   side: resizeRef,
-  //   setSize: setSize,
-  // });
 
   if (isShow === false) return <></>;
 
@@ -106,10 +101,6 @@ export default function WindowLib(props: WindowType) {
           <div className="title">{name}</div>
 
           <div className="btns">
-            {/* <button>
-              <Settings />
-            </button> */}
-
             <button onClick={onHide}>
               <Remove />
             </button>
@@ -160,6 +151,7 @@ const div = {
     cursor: ${(p) => (p.isFullScreen ? "default" : "move")};
 
     .title {
+      font-weight: 400;
     }
     .btns {
       display: flex;

@@ -62,8 +62,6 @@ export default function Signin() {
 
   return (
     <Container component="main" maxWidth="xs">
-      <CssBaseline />
-
       <Box
         sx={{
           marginTop: 8,
@@ -135,6 +133,7 @@ export default function Signin() {
           >
             Sign In
           </Button>
+
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2">

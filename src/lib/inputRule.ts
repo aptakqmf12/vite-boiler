@@ -5,7 +5,7 @@ const validateStringByRegex = (str: string, regex: string) => {
 export const emailRule = (email: string) => {
   return validateStringByRegex(
     email,
-    "^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+.[a-zA-Z-.]+$"
+    "^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\\.[a-zA-Z-.]+$"
   );
 };
 
