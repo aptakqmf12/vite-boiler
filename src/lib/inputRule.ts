@@ -12,7 +12,6 @@ export const emailRule = (email: string) => {
 export const passwordRule = (password: string) => {
   return validateStringByRegex(
     password,
-    // "^(?=.*[A-Za-z])(?=.*d)[A-Za-zd]{8,}$"
-    "^[a-zA-Z0-9]{8,}"
+    "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%])[a-zA-Z0-9!@#$%]{8,15}$"
   );
 };

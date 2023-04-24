@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, ChangeEvent } from "react";
 import {
   FormControl,
   Button,
@@ -18,13 +18,13 @@ import {
 import { LockOutlined } from "@mui/icons-material";
 import { emailRule, passwordRule } from "../../lib/inputRule";
 import { requestLogin } from "../../api/sign";
-import { Copyright } from "@mui/icons-material";
 
 export default function Signin() {
   const [email, setEmail] = useState("");
   const [emailValid, setEmailValid] = useState<boolean>();
   const [password, setPassword] = useState("");
   const [passwordValid, setPasswordValid] = useState<boolean>();
+  const [phoneNum, setPhoneNum] = useState<string>("");
 
   const generateBorder = (valid: boolean | undefined) => {
     return valid === true
@@ -38,6 +38,26 @@ export default function Signin() {
     e.preventDefault();
 
     requestLogin({ username: "admin", password: "riskzero1231" });
+  };
+
+  const handleChange = (e: ChangeEvent<any>) => {
+    let value = e.target.value;
+    value = value.replace(/-/g, "");
+    const { length } = value;
+
+    if (length < 4) {
+      value = value;
+    } else if (length < 7) {
+      value = value.substr(0, 3) + "-" + value.substr(3);
+    } else if (length < 11) {
+      value =
+        value.substr(0, 3) + "-" + value.substr(3, 3) + "-" + value.substr(6);
+    } else {
+      value =
+        value.substr(0, 3) + "-" + value.substr(3, 4) + "-" + value.substr(7);
+    }
+
+    setPhoneNum(value);
   };
 
   return (
@@ -68,10 +88,13 @@ export default function Signin() {
             label="Email Address"
             name="email"
             autoComplete="email"
-            autoFocus
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onBlur={(e) => setEmailValid(emailRule(email))}
+            error={emailValid === false}
+            helperText={emailValid === false ? "이메일 형식에 맞게 입력" : null}
           />
+
           <TextField
             margin="normal"
             required
@@ -83,6 +106,22 @@ export default function Signin() {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onBlur={(e) => setPasswordValid(passwordRule(password))}
+            error={passwordValid === false}
+            helperText={
+              passwordValid === false
+                ? "영문, 숫자, 특수기호(!,@,#,$,%) 모두 포함하여 8~15자리"
+                : null
+            }
+          />
+          <TextField
+            label="phone number"
+            variant="outlined"
+            fullWidth
+            value={phoneNum}
+            onChange={handleChange}
+            placeholder="000-0000-0000"
+            inputProps={{ maxLength: 13, pattern: "\\d{3}-\\d{3,4}-\\d{4}" }}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
@@ -110,7 +149,6 @@ export default function Signin() {
           </Grid>
         </Box>
       </Box>
-      <Copyright sx={{ mt: 8, mb: 4 }} />
     </Container>
 
     // <FormControl variant="standard" size="medium" margin="normal" required>
