@@ -4,6 +4,7 @@ import { theme } from "./style/theme";
 import useDisplay from "./hook/useDisplay";
 import RouterComponents from "./route";
 import { GlobalStyle } from "./style/style";
+import "./locale/i18n";
 
 function App() {
   const display = useDisplay();

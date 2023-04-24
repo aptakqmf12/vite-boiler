@@ -8,8 +8,9 @@ import {
   Remove,
   Settings,
 } from "@mui/icons-material";
-import { useWindowStore } from "../../store";
-import type { WindowType } from "../../store";
+import { useTranslation } from "react-i18next";
+import { useWindowStore } from "../../store/window";
+import type { WindowType } from "../../store/window";
 
 export type SizeType = {
   width: string | number;
@@ -17,6 +18,8 @@ export type SizeType = {
 };
 
 export default function WindowLib(props: WindowType) {
+  const { t, i18n } = useTranslation();
+
   const windowRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
   const resizeRef = useRef<HTMLDivElement>(null);
@@ -65,8 +68,6 @@ export default function WindowLib(props: WindowType) {
     bottom: window.innerHeight - THRESHOLD,
   };
 
-  // 리사이즈
-
   if (isShow === false) return <></>;
 
   return (
@@ -98,7 +99,10 @@ export default function WindowLib(props: WindowType) {
           className="handle"
           ref={handleRef}
         >
-          <div className="title">{name}</div>
+          <div className="title">
+            {t("File Station")}
+            {name}
+          </div>
 
           <div className="btns">
             <button onClick={onHide}>

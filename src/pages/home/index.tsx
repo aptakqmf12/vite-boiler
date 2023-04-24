@@ -2,7 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import Window from "../../components/layout/window";
 import { Home, People, DocumentScanner, Backpack } from "@mui/icons-material";
-import { useWindowStore } from "../../store";
+import { useWindowStore } from "../../store/window";
 
 import RiskEvaluate from "../../components/packages/riskEvaluate";
 import Spreadjs from "../../components/packages/spreadjs";
