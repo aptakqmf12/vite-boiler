@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { requestAccessToken } from "./sign";
-import { ResponseStatus } from "../types";
+import { ResponseStatus, ResponseText } from "../types";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -25,10 +25,18 @@ const authInstance = (options?: any) => {
 export const api = defaultInstance();
 export const apiAuth = authInstance();
 
-apiAuth.interceptors.response.use((res) => {
-  if (res.status === ResponseStatus.TOKEN_EXPIRED) {
-    // requestAccessToken
-  }
+apiAuth.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (err) => {
+    const error = err as AxiosError;
+    if (error.message === ResponseText.TOKEN_EXPIRED) {
+      await requestAccessToken();
 
-  return res;
-});
+      const originalResponse = await apiAuth.request(error.config!);
+      return originalResponse.data.data;
+    }
+    return Promise.reject(err);
+  }
+);

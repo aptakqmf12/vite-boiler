@@ -39,22 +39,4 @@ export const Primary: Story = {
       control: { type: "select" },
     },
   },
-  // args: {
-  //   width: 60,
-  //   height: 30,
-  //   color: "red",
-  //   disabled: false,
-  //   type: "outline",
-  //   valiant: "default",
-  // },
-  // argTypes: {
-  //   type: {
-  //     options: ["outline", "fill"],
-  //     control: { type: "radio" },
-  //   },
-  //   valiant: {
-  //     options: ["primary", "default"],
-  //     control: { type: "radio" },
-  //   },
-  // },
 };

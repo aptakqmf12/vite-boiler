@@ -18,7 +18,8 @@ import {
 import { LockOutlined } from "@mui/icons-material";
 import { emailRule, passwordRule } from "../../lib/inputRule";
 import { requestLogin } from "../../api/sign";
-
+// import styled from "styled-components";
+import { styled } from "@mui/system";
 export default function Signin() {
   const [email, setEmail] = useState("");
   const [emailValid, setEmailValid] = useState<boolean>();
@@ -70,7 +71,7 @@ export default function Signin() {
           alignItems: "center",
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+        <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
           <LockOutlined />
         </Avatar>
         <Typography component="h1" variant="h5">
@@ -129,56 +130,17 @@ export default function Signin() {
             type="submit"
             fullWidth
             variant="contained"
+            color="primary"
             sx={{ mt: 3, mb: 2 }}
           >
             Sign In
           </Button>
-
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
         </Box>
       </Box>
     </Container>
-
-    // <FormControl variant="standard" size="medium" margin="normal" required>
-    //   <Input
-    //     value={email}
-    //     onChange={(e) => setEmail(e.target.value)}
-    //     onBlur={() => setEmailValid(emailRule(email))}
-    //     style={{
-    //       border: generateBorder(emailValid),
-    //     }}
-    //     placeholder={"이메일을 입력해주세요"}
-    //     type={"text"}
-    //   />
-
-    //   <Input
-    //     value={password}
-    //     onChange={(e) => setPassword(e.target.value)}
-    //     onBlur={() => setPasswordValid(passwordRule(password))}
-    //     style={{
-    //       border: generateBorder(passwordValid),
-    //     }}
-    //     placeholder={"비밀번호를 입력해주세요"}
-    //     type={"password"}
-    //   />
-
-    //   <Button
-    //     variant="outlined"
-    //     onClick={() => requestLogin({ username: email, password: password })}
-    //   >
-    //     로그인
-    //   </Button>
-    // </FormControl>
   );
 }
+
+const TestButton = styled("button")(({ theme }) => ({
+  color: theme.palette.secondary.main,
+}));
