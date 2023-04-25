@@ -11,6 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useWindowStore } from "../../store/window";
 import type { WindowType } from "../../store/window";
+import useResize from "../../hook/useResize";
 
 export type SizeType = {
   width: string | number;
@@ -18,7 +19,7 @@ export type SizeType = {
 };
 
 export default function WindowLib(props: WindowType) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const windowRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
@@ -42,7 +43,6 @@ export default function WindowLib(props: WindowType) {
   });
 
   const onClose = () => removeWindow(uuid);
-
   const onFocus = () => {
     if (isFocused) return;
     focusWindow(uuid);
@@ -67,6 +67,8 @@ export default function WindowLib(props: WindowType) {
     right: window.innerWidth - THRESHOLD,
     bottom: window.innerHeight - THRESHOLD,
   };
+
+  useResize({ targetRef: resizeRef, width, height, setSize });
 
   if (isShow === false) return <></>;
 
