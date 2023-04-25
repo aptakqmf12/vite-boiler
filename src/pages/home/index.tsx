@@ -1,13 +1,14 @@
 import { useState } from "react";
 import styled from "styled-components";
-import Window from "../../components/layout/window";
 import { Home, People, DocumentScanner, Backpack } from "@mui/icons-material";
-import { useWindowStore } from "../../store/window";
+import { useWindowStore } from "@store/window";
 
-import RiskEvaluate from "../../components/packages/riskEvaluate";
-import Spreadjs from "../../components/packages/spreadjs";
-import Wijmo from "../../components/packages/wijmo";
-import Signin from "../../components/sign/signin";
+import RiskEvaluate from "@components/packages/riskEvaluate";
+import Spreadjs from "@components/packages/spreadjs";
+import Wijmo from "@components/packages/wijmo";
+import Signin from "@components/sign/signin";
+// import Window from "../../components/layout/window/window";
+import Window from "@components/layout/window/window";
 
 export default function MyHome() {
   const { currentWindows, appendWindow } = useWindowStore();

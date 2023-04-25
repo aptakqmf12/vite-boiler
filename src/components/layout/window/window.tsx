@@ -1,35 +1,38 @@
 import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Draggable from "react-draggable";
-import {
-  Fullscreen,
-  FullscreenExit,
-  Close,
-  Remove,
-  Settings,
-} from "@mui/icons-material";
-import { useTranslation } from "react-i18next";
-import { useWindowStore } from "../../store/window";
-import type { WindowType } from "../../store/window";
-import useResize from "../../hook/useResize";
+import { Fullscreen, FullscreenExit, Close, Remove } from "@mui/icons-material";
 
-export type SizeType = {
-  width: string | number;
-  height: string | number;
+import { useWindowStore } from "@store/window";
+import type { WindowType } from "@store/window";
+import Resizer from "./Resizer";
+import { useTranslation } from "react-i18next";
+
+export const Direction = {
+  Top: "top",
+  TopLeft: "topLeft",
+  TopRight: "topRight",
+  Right: "right",
+  Bottom: "bottom",
+  BottomLeft: "bottomLeft",
+  BottomRight: "bottomRight",
+  Left: "left",
 };
 
-export default function WindowLib(props: WindowType) {
+export default function Window(props: WindowType) {
   const { t } = useTranslation();
 
   const windowRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
-  const resizeRef = useRef<HTMLDivElement>(null);
+
   const {
     removeWindow,
     toggleScreenSize,
     setWindowPosition,
     focusWindow,
+    resizeWindow,
     toggleShowWindow,
+    currentWindows,
   } = useWindowStore();
   const { name, uuid, component, isFullScreen, isShow, zIndex, x, y, w, h } =
     props;
@@ -37,10 +40,10 @@ export default function WindowLib(props: WindowType) {
 
   const [isDragging, setIsDragging] = useState(false);
   const [{ currX, currY }, setPosition] = useState({ currX: x, currY: y });
-  const [{ width, height }, setSize] = useState<SizeType>({
-    width: w,
-    height: h,
-  });
+  const [{ width, height }, setSize] = useState<{
+    width: string | number;
+    height: string | number;
+  }>({ width: w, height: h });
 
   const onClose = () => removeWindow(uuid);
   const onFocus = () => {
@@ -68,7 +71,63 @@ export default function WindowLib(props: WindowType) {
     bottom: window.innerHeight - THRESHOLD,
   };
 
-  useResize({ targetRef: resizeRef, width, height, setSize });
+  // useEffect(() => {
+  //   if (typeof width === "string" || typeof height === "string") return;
+  //   resizeWindow(uuid, width, height);
+  // }, [width, height]);
+
+  const handleResize = (
+    direction: string,
+    movementX: number,
+    movementY: number
+  ) => {
+    const panel = windowRef.current;
+    if (!panel) return;
+    if (typeof width === "string" || typeof height === "string") return;
+
+    switch (direction) {
+      case Direction.TopLeft:
+        setSize({ width: width - movementX, height: height - movementY });
+        setPosition({ currX: currX + movementX, currY: currY + movementY });
+
+        break;
+
+      case Direction.Top:
+        setSize({ width: width, height: height - movementY });
+        setPosition({ currX: currX, currY: currY + movementY });
+        break;
+
+      case Direction.TopRight:
+        setSize({ width: width + movementX, height: height - movementY });
+        setPosition({ currX: currX, currY: currY + movementY });
+        break;
+
+      case Direction.Right:
+        setSize({ width: width + movementX, height: height });
+        break;
+
+      case Direction.BottomRight:
+        setSize({ width: width + movementX, height: height + movementY });
+        break;
+
+      case Direction.Bottom:
+        setSize({ width: width, height: height + movementY });
+        break;
+
+      case Direction.BottomLeft:
+        setSize({ width: width - movementX, height: height + movementY });
+        setPosition({ currX: currX + movementX, currY: currY });
+        break;
+
+      case Direction.Left:
+        setSize({ width: width - movementX, height: height });
+        setPosition({ currX: currX + movementX, currY: currY });
+        break;
+
+      default:
+        break;
+    }
+  };
 
   if (isShow === false) return <></>;
 
@@ -102,8 +161,7 @@ export default function WindowLib(props: WindowType) {
           ref={handleRef}
         >
           <div className="title">
-            {t("File Station")}
-            {name}
+            {width} {height}
           </div>
 
           <div className="btns">
@@ -120,9 +178,15 @@ export default function WindowLib(props: WindowType) {
           </div>
         </div.head>
 
-        <div.body>{component}</div.body>
-
-        <div.side ref={resizeRef}></div.side>
+        <div.body>
+          <Resizer
+            onResize={handleResize}
+            width={width as number}
+            height={height as number}
+            uuid={uuid}
+          />
+          {component}
+        </div.body>
       </div.wrap>
     </Draggable>
   );
@@ -137,10 +201,9 @@ const div = {
     margin: auto;
     user-select: none;
     background: #ffffff;
-    border: 1px #000 solid;
+    border: 1px #777777 solid;
     background-color: white;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
-    border: 1px gray solid;
 
     &.transparent {
       opacity: 0.6;
@@ -157,7 +220,6 @@ const div = {
     cursor: ${(p) => (p.isFullScreen ? "default" : "move")};
 
     .title {
-      font-weight: 400;
     }
     .btns {
       display: flex;
@@ -169,15 +231,5 @@ const div = {
     background-color: #ffffff;
     height: calc(100% - 30px);
     overflow: auto;
-  `,
-
-  side: styled.div`
-    position: absolute;
-    right: -2px;
-    bottom: -2px;
-    width: 10px;
-    height: 10px;
-    border: 1px black dashed;
-    cursor: se-resize;
   `,
 };
