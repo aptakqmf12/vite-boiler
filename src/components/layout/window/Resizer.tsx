@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import "@style/Resizer.css";
-import { Direction } from "./window";
+import { Direction } from ".";
 import { useWindowStore } from "@store/window";
 
 interface ResizerProps {
@@ -21,7 +21,6 @@ const Resizer = ({ onResize, width, height, uuid }: ResizerProps) => {
       if (!direction) return;
 
       const ratio = window.devicePixelRatio;
-
       onResize(direction, e.movementX / ratio, e.movementY / ratio);
     };
 

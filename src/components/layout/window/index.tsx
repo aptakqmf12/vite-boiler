@@ -71,11 +71,6 @@ export default function Window(props: WindowType) {
     bottom: window.innerHeight - THRESHOLD,
   };
 
-  // useEffect(() => {
-  //   if (typeof width === "string" || typeof height === "string") return;
-  //   resizeWindow(uuid, width, height);
-  // }, [width, height]);
-
   const handleResize = (
     direction: string,
     movementX: number,
@@ -89,7 +84,6 @@ export default function Window(props: WindowType) {
       case Direction.TopLeft:
         setSize({ width: width - movementX, height: height - movementY });
         setPosition({ currX: currX + movementX, currY: currY + movementY });
-
         break;
 
       case Direction.Top:
@@ -107,7 +101,11 @@ export default function Window(props: WindowType) {
         break;
 
       case Direction.BottomRight:
-        setSize({ width: width + movementX, height: height + movementY });
+        setSize({
+          width: width + movementX,
+          height: height + movementY,
+        });
+
         break;
 
       case Direction.Bottom:

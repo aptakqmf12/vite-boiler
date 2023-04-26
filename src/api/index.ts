@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { requestAccessToken } from "./sign";
 import { ResponseStatus, ResponseText } from "../types";
 
@@ -14,6 +14,7 @@ const authInstance = (options?: any) => {
   const accessToken = localStorage.getItem("access_token");
 
   return axios.create({
+    timeout: 5000,
     baseURL: BASE_URL,
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -30,12 +31,15 @@ apiAuth.interceptors.response.use(
     return response;
   },
   async (err) => {
-    const error = err as AxiosError;
-    if (error.message === ResponseText.TOKEN_EXPIRED) {
-      await requestAccessToken();
+    const { response, config } = err;
 
-      const originalResponse = await apiAuth.request(error.config!);
-      return originalResponse.data.data;
+    if (response.data.message === ResponseText.TOKEN_EXPIRED) {
+      const res = await requestAccessToken();
+
+      if (res.success === true) {
+        const res = await apiAuth.request(config);
+        return res;
+      }
     }
     return Promise.reject(err);
   }

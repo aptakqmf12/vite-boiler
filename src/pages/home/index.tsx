@@ -8,7 +8,7 @@ import Spreadjs from "@components/packages/spreadjs";
 import Wijmo from "@components/packages/wijmo";
 import Signin from "@components/sign/signin";
 // import Window from "../../components/layout/window/window";
-import Window from "@components/layout/window/window";
+import Window from "@components/layout/window";
 
 export default function MyHome() {
   const { currentWindows, appendWindow } = useWindowStore();

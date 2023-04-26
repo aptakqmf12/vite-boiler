@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { LockOutlined } from "@mui/icons-material";
 import { emailRule, passwordRule } from "../../lib/inputRule";
-import { requestLogin } from "../../api/sign";
+import { requestLogin, testApi } from "../../api/sign";
 // import styled from "styled-components";
 import { styled } from "@mui/system";
 export default function Signin() {
@@ -114,6 +114,7 @@ export default function Signin() {
             }
           />
           <TextField
+            margin="normal"
             label="phone number"
             variant="outlined"
             fullWidth
@@ -137,6 +138,16 @@ export default function Signin() {
           </Button>
         </Box>
       </Box>
+      <Button
+        type="button"
+        fullWidth
+        variant="contained"
+        color="primary"
+        sx={{ mt: 3, mb: 2 }}
+        onClick={testApi}
+      >
+        Test
+      </Button>
     </Container>
   );
 }

@@ -11,7 +11,7 @@ export type ColorsType = typeof colors;
 export const muiTheme = createTheme({
   palette: {
     primary: {
-      main: "#f00",
+      main: "#3b6fdf",
     },
     secondary: {
       main: "#ff8400",

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useWindowStore } from "../../store/window";
 import { useTranslation } from "react-i18next";
 import { Select, MenuItem, SelectChangeEvent } from "@mui/material";
+import { Chip, Avatar } from "@mui/material";
 
 export default function Header() {
   const { i18n } = useTranslation();
@@ -43,16 +44,14 @@ export default function Header() {
 
       <ul.nav>
         {currentWindows.map((window, i) => (
-          <li
-            onClick={() => toggleShowWindow(window.uuid)}
-            style={{
-              backgroundColor: window.isShow
-                ? "rgb(53, 153, 199)"
-                : "rgb(177, 177, 177)",
-            }}
-            key={i}
-          >
-            {window.name}
+          <li onClick={() => toggleShowWindow(window.uuid)} key={i}>
+            <Chip
+              avatar={<Avatar>{window.name.slice(0, 1)}</Avatar>}
+              label={window.name}
+              variant="filled"
+              color={window.isShow ? "primary" : "default"}
+              style={{ cursor: "pointer" }}
+            />
           </li>
         ))}
       </ul.nav>
@@ -77,11 +76,7 @@ const ul = {
     gap: 10px;
 
     li {
-      padding: 4px;
       cursor: pointer;
-      border-radius: 4px;
-      border: 1px black solid;
-      color: white;
     }
   `,
 };
