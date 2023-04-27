@@ -1,10 +1,11 @@
 import axios, { AxiosResponse } from "axios";
 import jwt from "jsonwebtoken";
 import { parseAccessToken } from "../../lib/token";
-import type { ResponseData } from "../../types";
+import { ResponseData, ResponseCode } from "../../types";
 import { ResponseStatus } from "../../types";
 import { encrypt, decrypt } from "../../lib/encrypt";
-import { api, apiAuth } from "..";
+import { api, apiAuth, dispatchError } from "..";
+
 interface LoginRequest {
   username: string;
   password: string;
@@ -35,19 +36,9 @@ const setStorageAndHeaderByToken = (
 
 // api
 export const requestLogin = async ({ username, password }: LoginRequest) => {
-  return await api
-    .post(`/auth/authenticate`, { username, password })
+  return await axios
+    .post(`/api/auth/authenticate`, { username, password })
     .then((res: AxiosResponse<ResponseData<LoginResponse>>) => {
-      if (res.status === ResponseStatus.SUCCESS) {
-        console.log(res);
-        const { accessToken, refreshToken } = res.data.data.result;
-        setStorageAndHeaderByToken(accessToken, refreshToken);
-      } else if (res.status === ResponseStatus.LOGIN_FAIL) {
-        alert("로그인 정보가 틀립니다.");
-      } else {
-        throw new Error();
-      }
-
       return res.data;
     });
 };
@@ -61,11 +52,8 @@ export const requestAccessToken = async () => {
     .post(`/auth/getAccessToken`, undefined, { headers })
     .then((res: AxiosResponse<ResponseData<RefreshResponse>>) => {
       if (res.status === ResponseStatus.SUCCESS) {
-        const { accessToken, refreshToken } = res.data.data.result;
+        const { accessToken, refreshToken } = res.data.data;
         setStorageAndHeaderByToken(accessToken, refreshToken);
-      } else {
-        // 로그아웃을 시켜야할수도
-        console.log("토큰갱신 실패");
       }
 
       return res.data;
@@ -80,10 +68,7 @@ export const requestLogout = async () => {
   return await apiAuth
     .post(`/auth/logout`, undefined, { headers })
     .then((res: AxiosResponse<ResponseData<any>>) => {
-      axios.defaults.headers.delete["Authorization"];
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
-      localStorage.removeItem("user_info");
+      return res.data;
     });
 };
 
@@ -93,7 +78,9 @@ export const testApi = async () => {
   };
 
   return await apiAuth
-    .post(`/v1/test`, undefined, { headers })
+    .get(`/api/test/test`, {
+      headers,
+    })
     .then((res: AxiosResponse<ResponseData<any>>) => {
       console.log("test 완료");
     });

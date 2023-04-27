@@ -30,9 +30,7 @@ export default function Window(props: WindowType) {
     toggleScreenSize,
     setWindowPosition,
     focusWindow,
-    resizeWindow,
     toggleShowWindow,
-    currentWindows,
   } = useWindowStore();
   const { name, uuid, component, isFullScreen, isShow, zIndex, x, y, w, h } =
     props;
@@ -71,62 +69,6 @@ export default function Window(props: WindowType) {
     bottom: window.innerHeight - THRESHOLD,
   };
 
-  const handleResize = (
-    direction: string,
-    movementX: number,
-    movementY: number
-  ) => {
-    const panel = windowRef.current;
-    if (!panel) return;
-    if (typeof width === "string" || typeof height === "string") return;
-
-    switch (direction) {
-      case Direction.TopLeft:
-        setSize({ width: width - movementX, height: height - movementY });
-        setPosition({ currX: currX + movementX, currY: currY + movementY });
-        break;
-
-      case Direction.Top:
-        setSize({ width: width, height: height - movementY });
-        setPosition({ currX: currX, currY: currY + movementY });
-        break;
-
-      case Direction.TopRight:
-        setSize({ width: width + movementX, height: height - movementY });
-        setPosition({ currX: currX, currY: currY + movementY });
-        break;
-
-      case Direction.Right:
-        setSize({ width: width + movementX, height: height });
-        break;
-
-      case Direction.BottomRight:
-        setSize({
-          width: width + movementX,
-          height: height + movementY,
-        });
-
-        break;
-
-      case Direction.Bottom:
-        setSize({ width: width, height: height + movementY });
-        break;
-
-      case Direction.BottomLeft:
-        setSize({ width: width - movementX, height: height + movementY });
-        setPosition({ currX: currX + movementX, currY: currY });
-        break;
-
-      case Direction.Left:
-        setSize({ width: width - movementX, height: height });
-        setPosition({ currX: currX + movementX, currY: currY });
-        break;
-
-      default:
-        break;
-    }
-  };
-
   if (isShow === false) return <></>;
 
   return (
@@ -158,9 +100,7 @@ export default function Window(props: WindowType) {
           className="handle"
           ref={handleRef}
         >
-          <div className="title">
-            {width} {height}
-          </div>
+          <div className="title">{name}</div>
 
           <div className="btns">
             <button onClick={onHide}>
@@ -178,11 +118,16 @@ export default function Window(props: WindowType) {
 
         <div.body>
           <Resizer
-            onResize={handleResize}
+            target={windowRef}
+            currX={currX}
+            currY={currY}
             width={width as number}
             height={height as number}
             uuid={uuid}
+            setPosition={setPosition}
+            setSize={setSize}
           />
+
           {component}
         </div.body>
       </div.wrap>

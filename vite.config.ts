@@ -6,6 +6,15 @@ import tsConfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   plugins: [react(), tsConfigPaths()],
   server: {
+    proxy: {
+      "/api": {
+        target: "http://192.168.150.69:8080",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+        secure: false,
+        ws: true,
+      },
+    },
     host: "0.0.0.0",
   },
 });

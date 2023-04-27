@@ -1,20 +1,90 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, RefObject } from "react";
 
 import "@style/Resizer.css";
 import { Direction } from ".";
 import { useWindowStore } from "@store/window";
 
 interface ResizerProps {
-  onResize: any;
+  target: RefObject<any>;
+  currX: number;
+  currY: number;
   width: number;
   height: number;
   uuid: string;
+  setSize: (v: { width: string | number; height: string | number }) => void;
+  setPosition: (v: { currX: number; currY: number }) => void;
 }
 
-const Resizer = ({ onResize, width, height, uuid }: ResizerProps) => {
+const Resizer = ({
+  target,
+  currX,
+  currY,
+  width,
+  height,
+  uuid,
+  setSize,
+  setPosition,
+}: ResizerProps) => {
   const { resizeWindow } = useWindowStore();
   const [direction, setDirection] = useState("");
   const [mouseDown, setMouseDown] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+
+  const onResize = (
+    direction: string,
+    movementX: number,
+    movementY: number
+  ) => {
+    const panel = target.current;
+    if (!panel) return;
+    if (typeof width === "string" || typeof height === "string") return;
+
+    switch (direction) {
+      case Direction.TopLeft:
+        setSize({ width: width - movementX, height: height - movementY });
+        setPosition({ currX: currX + movementX, currY: currY + movementY });
+        break;
+
+      case Direction.Top:
+        setSize({ width: width, height: height - movementY });
+        setPosition({ currX: currX, currY: currY + movementY });
+        break;
+
+      case Direction.TopRight:
+        setSize({ width: width + movementX, height: height - movementY });
+        setPosition({ currX: currX, currY: currY + movementY });
+        break;
+
+      case Direction.Right:
+        setSize({ width: width + movementX, height: height });
+        break;
+
+      case Direction.BottomRight:
+        setSize({
+          width: width + movementX,
+          height: height + movementY,
+        });
+
+        break;
+
+      case Direction.Bottom:
+        setSize({ width: width, height: height + movementY });
+        break;
+
+      case Direction.BottomLeft:
+        setSize({ width: width - movementX, height: height + movementY });
+        setPosition({ currX: currX + movementX, currY: currY });
+        break;
+
+      case Direction.Left:
+        setSize({ width: width - movementX, height: height });
+        setPosition({ currX: currX + movementX, currY: currY });
+        break;
+
+      default:
+        break;
+    }
+  };
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -25,6 +95,7 @@ const Resizer = ({ onResize, width, height, uuid }: ResizerProps) => {
     };
 
     if (mouseDown) {
+      setIsResizing(true);
       window.addEventListener("mousemove", handleMouseMove);
     }
 
@@ -36,7 +107,11 @@ const Resizer = ({ onResize, width, height, uuid }: ResizerProps) => {
   useEffect(() => {
     const handleMouseUp = () => {
       setMouseDown(false);
-      // resizeWindow(uuid, width, height);
+      setIsResizing(false);
+
+      if (isResizing) {
+        resizeWindow(uuid, width, height);
+      }
     };
 
     window.addEventListener("mouseup", handleMouseUp);
@@ -44,7 +119,7 @@ const Resizer = ({ onResize, width, height, uuid }: ResizerProps) => {
     return () => {
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [width, height]);
+  }, [width, height, isResizing]);
 
   const handleMouseDown = (direction: string) => () => {
     setDirection(direction);

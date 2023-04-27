@@ -42,8 +42,9 @@ export const useWindowStore = create<WindowStore>()(
       const isExistingWindow = useWindowStore
         .getState()
         .currentWindows.some((window) => window.name === props.name);
+      const isMaxSize = useWindowStore.getState().currentWindows.length === 5;
 
-      if (isExistingWindow) return;
+      if (isExistingWindow || isMaxSize) return;
       set(
         (state) => {
           return {
