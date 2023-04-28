@@ -19,11 +19,12 @@ export default function MyHome() {
   const { isLogin } = useLoginStore();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (isLogin === false) {
-  //     navigate("/signin");
-  //   }
-  // }, [isLogin]);
+  // 비로그인시 로그인페이지로 이동
+  useEffect(() => {
+    if (isLogin === false) {
+      navigate("/signin");
+    }
+  }, [isLogin]);
 
   const iconSx = { width: 80, height: 80 };
   const FIXED_STATIONS = [
@@ -32,16 +33,6 @@ export default function MyHome() {
       onclick: () =>
         appendWindow({ name: "위험성 평가", component: <RiskEvaluate /> }),
     },
-    // {
-    //   icon: <Backpack sx={iconSx} />,
-    //   onclick: () =>
-    //     appendWindow({
-    //       name: "엑셀 시트",
-    //       component: <Spreadjs />,
-    //       w: 1200,
-    //       h: 800,
-    //     }),
-    // },
     {
       icon: <DocumentScanner sx={iconSx} />,
       onclick: () => appendWindow({ name: "위즈모", component: <Wijmo /> }),
@@ -81,7 +72,10 @@ const div = {
     justify-content: flex-start;
     align-items: flex-start;
     width: 100%;
-    height: calc(100% - 50px);
+    height: 100%;
+    background: url("/public/images/bg_hero.png") no-repeat;
+    background-size: cover;
+    object-fit: cover;
 
     background-color: #ddd7e6;
   `,

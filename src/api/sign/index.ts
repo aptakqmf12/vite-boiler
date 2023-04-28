@@ -4,7 +4,7 @@ import { parseAccessToken } from "../../lib/token";
 import { ResponseData, ResponseCode } from "../../types";
 import { ResponseStatus } from "../../types";
 import { encrypt, decrypt } from "../../lib/encrypt";
-import { api, apiAuth, dispatchError } from "..";
+import { api, dispatchError } from "..";
 
 interface LoginRequest {
   username: string;
@@ -48,8 +48,8 @@ export const requestAccessToken = async () => {
     Authorization: `Bearer ${localStorage.getItem("refresh_token")}`,
   };
 
-  return await apiAuth
-    .post(`/auth/getAccessToken`, undefined, { headers })
+  return await api
+    .post(`/api/auth/getAccessToken`, undefined, { headers })
     .then((res: AxiosResponse<ResponseData<RefreshResponse>>) => {
       if (res.status === ResponseStatus.SUCCESS) {
         const { accessToken, refreshToken } = res.data.data;
@@ -65,8 +65,8 @@ export const requestLogout = async () => {
     Authorization: `Bearer ${localStorage.getItem("refresh_token")}`,
   };
 
-  return await apiAuth
-    .post(`/auth/logout`, undefined, { headers })
+  return await api
+    .post(`/api/auth/logout`, undefined, { headers })
     .then((res: AxiosResponse<ResponseData<any>>) => {
       return res.data;
     });
@@ -77,8 +77,8 @@ export const testApi = async () => {
     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
   };
 
-  return await apiAuth
-    .get(`/api/test/test`, {
+  return await api
+    .get(`/api/api/test/test`, {
       headers,
     })
     .then((res: AxiosResponse<ResponseData<any>>) => {

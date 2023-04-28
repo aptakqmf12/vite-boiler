@@ -2,45 +2,31 @@ import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { requestAccessToken } from "./sign";
 import { ResponseStatus, ResponseCode, ResponseData } from "../types";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+// const BASE_URL = import.meta.env.VITE_API_URL;
 
-const defaultInstance = () => {
-  return axios.create({
-    // baseURL: BASE_URL,
-  });
-};
-
-const authInstance = (options?: any) => {
-  const accessToken = localStorage.getItem("access_token");
-
+const Instance = () => {
   return axios.create({
     timeout: 5000,
-    // withCredentials: true,
-    // baseURL: BASE_URL,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      ...options,
-    },
   });
 };
 
-export const api = defaultInstance();
-export const apiAuth = authInstance();
+export const api = Instance();
 
-apiAuth.interceptors.response.use(
+api.interceptors.response.use(
   (response) => {
     return response;
   },
   async (err) => {
     const { response, config } = err;
-
     if (response.data.message !== ResponseCode.TOKEN_EXPIRED) return;
 
     const res = await requestAccessToken();
 
-    if (res.success === true) return await apiAuth.request(config);
-
-    return Promise.reject(err);
+    if (res.success === true) {
+      await api.request(config);
+    } else {
+      return Promise.reject(err);
+    }
   }
 );
 
